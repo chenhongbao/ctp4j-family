@@ -29,5 +29,11 @@
     <ClInclude Include="structs.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="parser.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="facade.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

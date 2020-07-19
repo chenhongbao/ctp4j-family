@@ -146,6 +146,8 @@
     <ClCompile Include="ctp4j-gate.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="facade.h" />
+    <ClInclude Include="parser.h" />
     <ClInclude Include="rjmacro.h" />
     <ClInclude Include="rjparser.h" />
     <ClInclude Include="structs.h" />
