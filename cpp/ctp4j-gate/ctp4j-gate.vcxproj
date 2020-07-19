@@ -147,7 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="facade.h" />
-    <ClInclude Include="parser.h" />
+    <ClInclude Include="frame.h" />
     <ClInclude Include="rjmacro.h" />
     <ClInclude Include="rjparser.h" />
     <ClInclude Include="structs.h" />

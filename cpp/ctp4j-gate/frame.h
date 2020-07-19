@@ -19,7 +19,7 @@ struct frame {
 	frame() : type(0), length(-1) {}
 };
 
-class frame_parser
+class frame_decoder
 	: public std::vector<frame> {
 public:
 	enum class parser_state : unsigned char
@@ -27,8 +27,8 @@ public:
 		wait_type, wait_length, wait_body
 	};
 
-	frame_parser() : _index(0), _state(parser_state::wait_type) {}
-	virtual ~frame_parser() {}
+	frame_decoder() : _index(0), _state(parser_state::wait_type) {}
+	virtual ~frame_decoder() {}
 
 	bool parse(const char* bytes, const int count) {
 		_store(bytes, count);
