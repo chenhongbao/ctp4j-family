@@ -30,9 +30,9 @@ public:
 	frame_decoder() : _index(0), _state(parser_state::wait_type) {}
 	virtual ~frame_decoder() {}
 
-	bool parse(const char* bytes, const int count) {
+	bool decode(const char* bytes, const int count) {
 		_store(bytes, count);
-		_parse_buffer();
+		_decode_buffer();
 		return size() > 0;
 	}
 
@@ -51,7 +51,7 @@ protected:
 		_index = 0;
 	}
 
-	void _parse_buffer() {
+	void _decode_buffer() {
 		bool res = true;
 		while (res) {
 			switch (_state)
