@@ -26,5 +26,8 @@
     <ClInclude Include="rjparser.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="structs.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

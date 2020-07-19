@@ -1130,5 +1130,28 @@ getter_def(CThostFtdcUserLogoutField) {
 	write_document();
 }
 
+#include "structs.h"
+
+getter_def(CThostFtdcConnectField) {
+	document();
+	write_document();
+}
+
+getter_def(CThostFtdcDisconnect) {
+	document();
+	get_int(Reason);
+	write_document();
+}
+
+setter_def(CThostFtdcSubMarketDataField) {
+	parse_or_throw();
+	set_array(InstrumentID, Count);
+}
+
+setter_def(CThostFtdcUnsubMarketDataField) {
+	parse_or_throw();
+	set_array(InstrumentID, Count);
+}
+
 // Undef macros.
 #include "rjmacro.h"

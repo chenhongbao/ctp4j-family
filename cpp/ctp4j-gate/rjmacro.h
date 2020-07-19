@@ -49,6 +49,21 @@ using namespace rapidjson;
 
 #define set_double(member)  set_Ty(member, IsDouble, GetDouble)
 
+#define set_array(array_m, count_m)                                                     \
+{                                                                                       \
+    auto iter = __doc__.FindMember(str(array_m));                                       \
+    if (iter != __doc__.MemberEnd() && !iter->value.IsNull() && iter->value.IsArray()   \
+        && iter->value.Size() > 0) {                                                    \
+        __field__.##count_m = (int)iter->value.Size();                                  \
+        __field__.##array_m = new char* [__field__.##count_m];                          \
+        for (int i = 0; i < __field__.Count; ++i) {                                     \
+            __field__.##array_m[i] = new TThostFtdcInstrumentIDType{ 0 };               \
+            strcpy_s(__field__.##array_m[i], sizeof(TThostFtdcInstrumentIDType),        \
+                iter->value[i].GetString());                                            \
+        }                                                                               \
+    }                                                                                   \
+}
+
 #define parse_or_throw()                                                                \
 Document __doc__;                                                                       \
 __doc__.Parse(__json__);                                                                \
