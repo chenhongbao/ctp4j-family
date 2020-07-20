@@ -148,6 +148,7 @@
   <ItemGroup>
     <ClInclude Include="facade.h" />
     <ClInclude Include="frame.h" />
+    <ClInclude Include="message.h" />
     <ClInclude Include="rjmacro.h" />
     <ClInclude Include="rjparser.h" />
     <ClInclude Include="structs.h" />

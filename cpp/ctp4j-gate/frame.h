@@ -11,11 +11,16 @@
 
 typedef std::string		frame_body;
 
+#define FRAME_HEARTBEAT		0x10000000
+#define FRAME_REQUEST		0x10000001
+#define FRAME_RESPONSE		0x10000002
+#define FRAME_LOGIN			0x10000003
+
 struct frame {
 	frame_type type;
 	frame_length length;
 	frame_body body;
-	
+
 	frame() : type(0), length(-1) {}
 };
 
@@ -131,5 +136,29 @@ protected:
 	int _index;
 	parser_state _state;
 	frame _decoding;
+};
+
+class frame_encoder {
+public:
+	frame_encoder() {}
+	virtual ~frame_encoder() {}
+
+	void encode(frame& frame, std::string& bytes) {
+		if (frame.length <= 0)
+			throw std::length_error("frame body length underflow");
+		_append(frame.type, bytes);
+		_append(frame.length, bytes);
+		_append(frame.body, bytes);
+	}
+
+protected:
+	static inline void _append(int32_t value, std::string& bytes) {
+		value = c_hton(value);
+		bytes.append((char*)(&value), sizeof(int32_t));
+	}
+
+	static inline void _append(std::string& content, std::string& bytes) {
+		bytes.append(content);
+	}
 };
 #endif
