@@ -18,6 +18,9 @@
     <ClCompile Include="ctp4j-gate.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="facade.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="rjmacro.h">

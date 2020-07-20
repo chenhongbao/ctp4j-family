@@ -9,6 +9,8 @@
 #include <string>
 #include <stdexcept>
 
+typedef int32_t			frame_type;
+typedef int32_t			frame_length;
 typedef std::string		frame_body;
 
 #define FRAME_HEARTBEAT		0x10000000
