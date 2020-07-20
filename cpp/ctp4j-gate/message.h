@@ -62,35 +62,67 @@ struct body {
 	body() : current_count(0), total_count(0) {}
 };
 
-void decode(frame& frame, body& body) {
-	Document doc;
-	if (doc.Parse(frame.body.c_str()).HasParseError())
-		throw std::runtime_error("parser error");
-	_decode_string(_str(Type), doc, body.type);
-	_decode_string(_str(RequestID), doc, body.request_id);
-	_decode_string(_str(ResponseID), doc, body.response_id);
-	_decode_string(_str(Body), doc, body.object);
-	_decode_string(_str(RspInfo), doc, body.rsp_info);
-	_decode_int(_str(CurrentCount),	doc, body.current_count);
-	_decode_int(_str(TotalCount), doc, body.total_count);
-}
+class body_decoder {
+public:
+	static void decode(frame& frame, body& body) {
+		Document doc;
+		if (doc.Parse(frame.body.c_str()).HasParseError())
+			throw std::runtime_error("parser error");
+		_decode_string(_str(Type), doc, body.type);
+		_decode_string(_str(RequestID), doc, body.request_id);
+		_decode_string(_str(ResponseID), doc, body.response_id);
+		_decode_string(_str(Body), doc, body.object);
+		_decode_string(_str(RspInfo), doc, body.rsp_info);
+		_decode_int(_str(CurrentCount), doc, body.current_count);
+		_decode_int(_str(TotalCount), doc, body.total_count);
+	}
 
-void _decode_string(
-	const char* member,
-	Document& doc,
-	std::string& dest) {
-	if (doc.HasMember(member) && doc[member].IsString())
-		dest.assign(doc[member].GetString());
-}
+protected:
+	static void _decode_string(
+		const char* member,
+		Document& doc,
+		std::string& dest) {
+		if (doc.HasMember(member) && doc[member].IsString())
+			dest.assign(doc[member].GetString());
+	}
 
 
-void _decode_int(
-	const char* member,
-	Document& doc,
-	int& dest) {
-	if (doc.HasMember(member) && doc[member].IsInt())
-		dest = doc[member].GetInt();
-}
+	static void _decode_int(const char* member, Document& doc, int& dest) {
+		if (doc.HasMember(member) && doc[member].IsInt())
+			dest = doc[member].GetInt();
+	}
+};
+
+class body_encoder {
+public:
+	static void encode(body& body, frame& frame, frame_type type) {
+		StringBuffer sb;
+		Writer<StringBuffer> wr;
+		wr.StartObject();
+		_encode_string(wr, _str(Type), body.type);
+		_encode_string(wr, _str(RequestID), body.request_id);
+		_encode_string(wr, _str(ResponseID), body.response_id);
+		_encode_string(wr, _str(Body), body.object);
+		_encode_string(wr, _str(RspInfo), body.rsp_info);
+		_encode_int(wr, _str(CurrentCount), body.current_count);
+		_encode_int(wr, _str(TotalCount), body.total_count);
+		wr.EndObject();
+		frame.length = sb.GetSize();
+		frame.body.assign(sb.GetString(), sb.GetSize());
+		frame.type = type;
+	}
+
+protected:
+	static void _encode_string(Writer<StringBuffer>& wr, const char* member, std::string& str) {
+		wr.Key(member);
+		wr.String(str.c_str());
+	}
+
+	static void _encode_int(Writer<StringBuffer>& wr, const char* member, int value) {
+		wr.Key(member);
+		wr.Int(value);
+	}
+};
 
 template<typename Ty>
 struct message {
@@ -104,15 +136,31 @@ struct message {
 };
 
 template<typename Ty>
-void decode(body& body, message<Ty>& message) {
-	// Decode body to message.
-	set_field(message.rsp_info, body.rsp_info.c_str());
-	set_field(message.object, body.rsp_info.c_str());
-	message.type = body.type;
-	message.current_count = body.current_count;
-	message.total_count = body.total_count;
-	message.request_id = body.request_id;
-	message.response_id = body.response_id;
-}
+class message_encoder {
+public:
+	static void decode(body& body, message<Ty>& message) {
+		// Decode body to message.
+		set_field(message.rsp_info, body.rsp_info.c_str());
+		set_field(message.object, body.rsp_info.c_str());
+		message.type = body.type;
+		message.current_count = body.current_count;
+		message.total_count = body.total_count;
+		message.request_id = body.request_id;
+		message.response_id = body.response_id;
+	}
+};
 
+template<typename Ty>
+class message_decoder {
+public:
+	static void encode(message<Ty>& message, body& body) {
+		get_field(message.object, body.object);
+		get_field(message.rsp_info, body.rsp_info);
+		body.type = message.type;
+		body.current_count = message.current_count;
+		body.total_count = message.total_count;
+		body.request_id = message.request_id;
+		body.response_id = message.response_id;
+	}
+};
 #endif
