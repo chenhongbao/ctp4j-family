@@ -66,13 +66,13 @@ void decode(frame& frame, body& body) {
 	Document doc;
 	if (doc.Parse(frame.body.c_str()).HasParseError())
 		throw std::runtime_error("parser error");
-	_decode_string("Type", doc, body.type);
-	_decode_string("RequestID", doc, body.request_id);
-	_decode_string("ResponseID", doc, body.response_id);
-	_decode_string("Body", doc, body.object);
-	_decode_string("RspInfo", doc, body.rsp_info);
-	_decode_int("CurrentCount", doc, body.current_count);
-	_decode_int("TotalCount", doc, body.total_count);
+	_decode_string(_str(Type), doc, body.type);
+	_decode_string(_str(RequestID), doc, body.request_id);
+	_decode_string(_str(ResponseID), doc, body.response_id);
+	_decode_string(_str(Body), doc, body.object);
+	_decode_string(_str(RspInfo), doc, body.rsp_info);
+	_decode_int(_str(CurrentCount),	doc, body.current_count);
+	_decode_int(_str(TotalCount), doc, body.total_count);
 }
 
 void _decode_string(
