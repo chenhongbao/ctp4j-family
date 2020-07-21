@@ -5,7 +5,7 @@
 
 class client {
 public:
-    virtual int send(const char* src, const int length) = 0;
+    virtual int c_send(const char* src, const int length) = 0;
     virtual ~client() {}
 };
 

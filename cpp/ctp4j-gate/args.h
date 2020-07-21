@@ -43,7 +43,7 @@ public:
         return _host;
     }
 
-    int get_port() {
+    const std::string& get_port() {
         return _port;
     }
 
@@ -72,9 +72,9 @@ protected:
             _host = p;
         p = _get_arg("--port", argc, argv);
         if (p == nullptr)
-            _port = 9036;
+            _port = "9036";
         else
-            _port = ::atoi(p);
+            _port = p;
         // flow.
         p = _get_arg("--flow", argc, argv);
         if (p == nullptr)
@@ -123,8 +123,7 @@ protected:
 
     bool _use_udp, _multicast, _help;
     app_mode _mode;
-    int _port;
-    std::string _flow, _host;
+    std::string _flow, _host, _port;
     std::vector<std::string> _fronts;
 };
 

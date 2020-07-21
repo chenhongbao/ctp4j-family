@@ -53,7 +53,7 @@
     <ClInclude Include="client.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="nn_client.h">
+    <ClInclude Include="ws_client.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

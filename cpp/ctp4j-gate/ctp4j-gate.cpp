@@ -1,4 +1,4 @@
-﻿#pragma comment (lib, "nanomsg.lib")
+﻿#pragma comment (lib, "Ws2_32.lib")
 
 #include "trade.h"
 #include "md.h"
