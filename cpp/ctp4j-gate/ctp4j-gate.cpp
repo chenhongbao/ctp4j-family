@@ -1,4 +1,7 @@
 ﻿#pragma comment (lib, "Ws2_32.lib")
+#pragma comment (lib, "Ole32.lib")
+#pragma comment (lib, "thosttraderapi_se.lib")
+#pragma comment (lib, "thostmduserapi_se.lib")
 
 #include "trade.h"
 #include "md.h"

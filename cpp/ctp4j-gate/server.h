@@ -60,10 +60,10 @@ protected:
         struct addrinfo hints;
 
         ZeroMemory(&hints, sizeof(hints));
-        hints.ai_family = AF_INET;
-        hints.ai_socktype = SOCK_STREAM;
-        hints.ai_protocol = IPPROTO_TCP;
-        hints.ai_flags = AI_PASSIVE;
+        hints.ai_family     = AF_INET;
+        hints.ai_socktype   = SOCK_STREAM;
+        hints.ai_protocol   = IPPROTO_TCP;
+        hints.ai_flags      = AI_PASSIVE;
 
         // Resolve the server address and port
         if (getaddrinfo(host, port, &hints, &result) != 0) {
@@ -136,14 +136,14 @@ protected:
     inline void _call_body() {
         ::body body;
         body_decoder::decode(_decoder.back(), body);
-        _call_catch(_service.on_body(body));
+        _call_catch(_service.on_body(_client, body));
         _decoder.pop_back();
     }
 
-    SOCKET _listen_socket;
-    ::args& _args;
-    ::service& _service;
-    ::ws_client _client;
+    SOCKET          _listen_socket;
+    ::args&         _args;
+    ::service&      _service;
+    ::ws_client     _client;
     ::frame_decoder _decoder;
 };
 

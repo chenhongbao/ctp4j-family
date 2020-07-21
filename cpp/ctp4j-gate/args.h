@@ -107,9 +107,9 @@ protected:
     }
 
     void _parse_front(const char* fronts) {
-        char* token = NULL;
-        char* next_token = NULL;
-        int size = (int)strlen(fronts) + 1;
+        char* token         = NULL;
+        char* next_token    = NULL;
+        int size            = (int)strlen(fronts) + 1;
         if (size < 2)
             return;
         char* buffer = new char[size] { 0 };
@@ -121,10 +121,10 @@ protected:
         }
     }
 
-    bool _use_udp, _multicast, _help;
-    app_mode _mode;
-    std::string _flow, _host, _port;
-    std::vector<std::string> _fronts;
+    bool                        _use_udp, _multicast, _help;
+    app_mode                    _mode;
+    std::string                 _flow, _host, _port;
+    std::vector<std::string>    _fronts;
 };
 
 #endif

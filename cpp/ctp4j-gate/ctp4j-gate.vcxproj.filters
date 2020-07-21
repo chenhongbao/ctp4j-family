@@ -59,5 +59,8 @@
     <ClInclude Include="service.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="trade_spi.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

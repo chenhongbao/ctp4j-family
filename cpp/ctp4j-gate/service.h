@@ -10,7 +10,7 @@ struct body;
 class service {
 public:
     virtual void on_open(::client& client) = 0;
-    virtual void on_body(::body& body) = 0;
+    virtual void on_body(::client& client, ::body& body) = 0;
     virtual void on_close() = 0;
 };
 

@@ -14,7 +14,7 @@ public:
 
     virtual ~md_service() {}
 
-    virtual void on_body(::body& body) {
+    virtual void on_body(::client& client, ::body& body) {
 
     }
 

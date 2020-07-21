@@ -9,19 +9,19 @@
 #include <string>
 #include <stdexcept>
 
-typedef int32_t			frame_type;
-typedef int32_t			frame_length;
-typedef std::string		frame_body;
+typedef int32_t             frame_type;
+typedef int32_t             frame_length;
+typedef std::string         frame_body;
 
-#define FRAME_HEARTBEAT		0x10000000
-#define FRAME_REQUEST		0x10000001
-#define FRAME_RESPONSE		0x10000002
-#define FRAME_LOGIN			0x10000003
+#define FRAME_HEARTBEAT     0x10000000
+#define FRAME_REQUEST       0x10000001
+#define FRAME_RESPONSE      0x10000002
+#define FRAME_LOGIN         0x10000003
 
 struct frame {
-	frame_type type;
-	frame_length length;
-	frame_body body;
+	frame_type      type;
+	frame_length    length;
+	frame_body      body;
 
 	frame() : type(0), length(-1) {}
 };
@@ -86,11 +86,11 @@ protected:
 
 	int32_t _decode_int32() {
 		char b[4]{ 0 };
-		int* p = (int*)b;
-		b[0] = _buffer[_index++];
-		b[1] = _buffer[_index++];
-		b[2] = _buffer[_index++];
-		b[3] = _buffer[_index++];
+		int* p  = (int*)b;
+		b[0]    = _buffer[_index++];
+		b[1]    = _buffer[_index++];
+		b[2]    = _buffer[_index++];
+		b[3]    = _buffer[_index++];
 		return c_ntoh(*p);
 	}
 
@@ -134,10 +134,10 @@ protected:
 		new(&_decoding) frame();
 	}
 
-	std::vector<char> _buffer;
-	int _index;
-	parser_state _state;
-	frame _decoding;
+	std::vector<char>	_buffer;
+	int					_index;
+	parser_state		_state;
+	frame				_decoding;
 };
 
 class frame_encoder {
@@ -145,12 +145,12 @@ public:
 	frame_encoder() {}
 	virtual ~frame_encoder() {}
 
-	void encode(frame& frame, std::string& bytes) {
+	static void encode(frame& frame, std::string& bytes) {
 		if (frame.length <= 0)
 			throw std::length_error("frame body length underflow");
-		_append(frame.type, bytes);
-		_append(frame.length, bytes);
-		_append(frame.body, bytes);
+		_append(frame.type,		bytes);
+		_append(frame.length,	bytes);
+		_append(frame.body,		bytes);
 	}
 
 protected:

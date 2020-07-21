@@ -3,9 +3,11 @@
 #ifndef __CLIENT__
 #define __CLIENT__
 
+struct body;
+
 class client {
 public:
-    virtual int c_send(const char* src, const int length) = 0;
+    virtual size_t send_body(::body& body, __int32 frame_type) = 0;
     virtual ~client() {}
 };
 
