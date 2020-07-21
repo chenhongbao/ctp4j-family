@@ -2,6 +2,7 @@
 
 #include "trade.h"
 #include "md.h"
+#include "server.h"
 
 constexpr auto help_msg = R"(
 --trade        trade mode, logins to trader front
@@ -25,24 +26,21 @@ int main(int argc, char** argv)
         exit(0);
     }
     else {
+        ::service* service_ptr;
         try {
             switch (args.get_mode()) {
             case app_mode::trade:
-            {
-                trade_server trade(args);
-                trade.run();
-            }
-            break;
+                service_ptr = new trade_service(args);
+                break;
             case app_mode::md:
-            {
-                md_server md(args);
-                md.run();
-            }
-            break;
+                service_ptr = new md_service(args);
+                break;
             default:
-                print("no valid mode, `--help`");
+                print("invalid mode, `--help`");
                 exit(-1);
             }
+            ::server svr(args, *service_ptr);
+            svr.run();
         }
         catch (std::exception& e) {
             print(e.what());

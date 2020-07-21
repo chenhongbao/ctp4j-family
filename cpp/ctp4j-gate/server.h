@@ -4,7 +4,7 @@
 #define __SERVER__
 
 #include "args.h"
-#include "message.h"
+#include "service.h"
 #include "ws_client.h"
 
 #define WIN32_LEAN_AND_MEAN
@@ -29,21 +29,17 @@
 
 class server {
 public:
-    server(::args& args) : _args(args), _listen_socket(INVALID_SOCKET) {}
+    server(::args& args, ::service& service) : _args(args), _service(service), _listen_socket(INVALID_SOCKET) {}
     virtual ~server() {}
 
     void run() {
-        _call_catch(on_start());
         _ws();
         _listen(_args.get_host().c_str(), _args.get_port().c_str());
         _serve();
         _ws();
-        _call_catch(on_close());
     }
 
-    virtual void on_start() = 0;
-    virtual void on_body(::body& body) = 0;
-    virtual void on_close() = 0;
+
 
 protected:
     void _ws() {
@@ -102,14 +98,16 @@ protected:
             WSACleanup();
             throw ws_error(WSAGetLastError());
         }
+        _client._set_socket(client_socket);
         return client_socket;
     }
 
     void _serve() {
+        int r;
         SOCKET client;
         char* buffer = new char[default_buff_size];
         while ((client = _accept()) != INVALID_SOCKET) {
-            int r;
+            _call_catch(_service.on_open());
             do {
                 r = recv(client, buffer, default_buff_size, 0);
                 if (r > 0) {
@@ -121,6 +119,7 @@ protected:
                     closesocket(client);
                 }
             } while (r > 0);
+            _call_catch(_service.on_close());
         }
         delete[] buffer;
         closesocket(_listen_socket);
@@ -137,12 +136,13 @@ protected:
     inline void _call_body() {
         ::body body;
         body_decoder::decode(_decoder.back(), body);
-        _call_catch(on_body(body));
+        _call_catch(_service.on_body(body));
         _decoder.pop_back();
     }
 
     SOCKET _listen_socket;
     ::args& _args;
+    ::service& _service;
     ::ws_client _client;
     ::frame_decoder _decoder;
 };

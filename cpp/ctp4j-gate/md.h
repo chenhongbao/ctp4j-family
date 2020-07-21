@@ -3,20 +3,21 @@
 #ifndef __MD__
 #define __MD__
 
-#include "server.h"
+#include "args.h"
+#include "service.h"
 
-class md_server : public server {
+class md_service : public service {
 public:
-    md_server(::args& args) : server(args) {
+    md_service(::args& args) {
     }
 
-    virtual ~md_server() {}
+    virtual ~md_service() {}
 
     virtual void on_body(::body& body) {
 
     }
 
-    virtual void on_start() {
+    virtual void on_open() {
 
     }
 

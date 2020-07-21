@@ -3,20 +3,21 @@
 #ifndef __TRADE__
 #define __TRADE__
 
-#include "server.h"
+#include "args.h"
+#include "service.h"
 
-class trade_server : public server {
+class trade_service : public service {
 public:
-    trade_server(::args& args) : server(args) {
+    trade_service(::args& args) {
     }
 
-    virtual ~trade_server() {}
+    virtual ~trade_service() {}
 
     virtual void on_body(::body& body) {
 
     }
 
-    virtual void on_start() {
+    virtual void on_open() {
 
     }
 

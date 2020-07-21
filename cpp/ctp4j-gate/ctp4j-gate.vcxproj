@@ -152,6 +152,7 @@
     <ClInclude Include="frame.h" />
     <ClInclude Include="md.h" />
     <ClInclude Include="message.h" />
+    <ClInclude Include="service.h" />
     <ClInclude Include="ws_client.h" />
     <ClInclude Include="rjmacro.h" />
     <ClInclude Include="rjparser.h" />
