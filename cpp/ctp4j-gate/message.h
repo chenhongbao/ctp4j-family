@@ -107,7 +107,7 @@ public:
 		_encode_int(wr, _str(CurrentCount), body.current_count);
 		_encode_int(wr, _str(TotalCount), body.total_count);
 		wr.EndObject();
-		frame.length = sb.GetSize();
+		frame.length = (frame_length)sb.GetSize();
 		frame.body.assign(sb.GetString(), sb.GetSize());
 		frame.type = type;
 	}

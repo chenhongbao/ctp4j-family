@@ -18,9 +18,6 @@
     <ClCompile Include="ctp4j-gate.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="facade.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="rjmacro.h">
@@ -39,6 +36,24 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="message.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="args.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="server.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="trade.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="md.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="client.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="nn_client.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
