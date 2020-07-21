@@ -25,12 +25,16 @@ public:
     virtual ~ws_client() {}
 
     virtual int c_send(const char* src, const int length) {
+        if (!is_valid())
+            return SOCKET_ERROR;
         std::unique_lock<std::mutex> lock(_send_mutex);
         int sent = 0;
         while (sent < length) {
             int r = 0;
-            if ((r = send(_socket, src + sent, length - sent, 0)) == SOCKET_ERROR)
+            if ((r = send(_socket, src + sent, length - sent, 0)) == SOCKET_ERROR) {
+                _set_socket(0);
                 throw ws_error(WSAGetLastError());
+            }
             sent += r;
         }
         return sent;

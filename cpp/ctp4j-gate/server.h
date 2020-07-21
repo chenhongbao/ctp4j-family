@@ -115,8 +115,11 @@ protected:
                 if (r > 0) {
                     _call_catch(_decode_call(buffer, r));
                 }
-                else if (r < 0)
+                else {
+                    // Socket is closed or error.
+                    _client._set_socket(0);
                     closesocket(client);
+                }
             } while (r > 0);
         }
         delete[] buffer;
