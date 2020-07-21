@@ -107,7 +107,7 @@ protected:
         SOCKET client;
         char* buffer = new char[default_buff_size];
         while ((client = _accept()) != INVALID_SOCKET) {
-            _call_catch(_service.on_open());
+            _call_catch(_service.on_open(_client));
             do {
                 r = recv(client, buffer, default_buff_size, 0);
                 if (r > 0) {
@@ -115,11 +115,11 @@ protected:
                 }
                 else {
                     // Socket is closed or error.
+                    _call_catch(_service.on_close());
                     _client._set_socket(0);
                     closesocket(client);
                 }
             } while (r > 0);
-            _call_catch(_service.on_close());
         }
         delete[] buffer;
         closesocket(_listen_socket);

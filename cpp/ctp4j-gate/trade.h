@@ -18,7 +18,7 @@ public:
 
     }
 
-    virtual void on_open() {
+    virtual void on_open(::client& client) {
 
     }
 
