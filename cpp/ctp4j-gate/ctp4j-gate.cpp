@@ -25,22 +25,30 @@ int main(int argc, char** argv)
         exit(0);
     }
     else {
-        switch (args.get_mode()) {
-        case app_mode::trade:
-        {
-            trade_server trade(args);
-            trade.run();
+        try {
+            switch (args.get_mode()) {
+            case app_mode::trade:
+            {
+                trade_server trade(args);
+                trade.run();
+            }
+            break;
+            case app_mode::md:
+            {
+                md_server md(args);
+                md.run();
+            }
+            break;
+            default:
+                print("no valid mode, `--help`");
+                exit(-1);
+            }
         }
-        break;
-        case app_mode::md:
-        {
-            md_server md(args);
-            md.run();
+        catch (std::exception& e) {
+            print(e.what());
         }
-        break;
-        default:
-            print("no valid mode, `--help`");
-            exit(-1);
+        catch (...) {
+            print("unknown error");
         }
         return 0;
     }

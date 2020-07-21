@@ -21,7 +21,7 @@
         print(e.what());                \
     }                                   \
     catch (...) {                       \
-        print("unknown exception");     \
+        print("unknown error");         \
     }                                   \
 }
 
