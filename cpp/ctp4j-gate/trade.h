@@ -5,6 +5,7 @@
 
 #include "args.h"
 #include "service.h"
+#include "message.h"
 
 class trade_service : public service {
 public:

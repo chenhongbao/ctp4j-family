@@ -3,7 +3,7 @@
 #ifndef __SERVICE__
 #define __SERVICE__
 
-#include "message.h"
+struct body;
 
 class service {
 public:
