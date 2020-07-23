@@ -15,27 +15,27 @@ struct CThostFtdcConnectField
 
 struct CThostFtdcDisconnect
 {
-	TThostFtdcDisconnectReasonType Reason;
+    TThostFtdcDisconnectReasonType Reason;
 };
 
 struct CThostFtdcSubMarketDataField
 {
-	TThostFtdcInstrumentIDArrayType InstrumentID;
-	TThostFtdcInstrumentCountType Count;
+    TThostFtdcInstrumentIDArrayType InstrumentID;
+    TThostFtdcInstrumentCountType Count;
 };
 
 struct CThostFtdcUnsubMarketDataField
 {
-	TThostFtdcInstrumentIDArrayType InstrumentID;
-	TThostFtdcInstrumentCountType Count;
+    TThostFtdcInstrumentIDArrayType InstrumentID;
+    TThostFtdcInstrumentCountType Count;
 };
 
 template<typename Ty>
 void release_md(Ty& v) {
-	if (v.Count > 0)
-		for (int i = 0; i < v.Count; ++i)
-			if (v.InstrumentID[i] != nullptr)
-				delete v.InstrumentID[i];
-	delete v.InstrumentID;
+    if (v.Count > 0)
+        for (int i = 0; i < v.Count; ++i)
+            if (v.InstrumentID[i] != nullptr)
+                delete v.InstrumentID[i];
+    delete v.InstrumentID;
 }
 #endif

@@ -8,10 +8,10 @@
 
 class ctp_error : public std::runtime_error {
 public:
-	ctp_error(int error) : std::runtime_error("ctp error(" + std::to_string(error) + ")") {
-	}
+    ctp_error(int error) : std::runtime_error("ctp error(" + std::to_string(error) + ")") {
+    }
 
-	virtual ~ctp_error() {}
+    virtual ~ctp_error() {}
 };
 
 class ws_error : public std::runtime_error {
@@ -52,6 +52,14 @@ public:
     }
 
     virtual ~frame_length_error() {}
+};
+
+class nid_not_found : public std::runtime_error {
+public:
+    nid_not_found(const int n_id) : std::runtime_error("no id(" + std::to_string(n_id) + ")") {
+    }
+
+    virtual ~nid_not_found() {}
 };
 
 #endif

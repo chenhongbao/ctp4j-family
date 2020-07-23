@@ -14,7 +14,7 @@ constexpr auto help_msg = R"(
 --multicast    multicast communication mode, `false` by default
 --host  <host> host name of ipv4 address, by default it is `localhost`
 --port  <port> port, by default it is `9036`
---flow	<directory>
+--flow    <directory>
                flow directory, `.` by default
 --front <address0>,<address1>,...
                front addresses(no space in between)

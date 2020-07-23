@@ -10,24 +10,46 @@
 class md_service : public service {
 public:
     md_service(::args& args) : _spi(nullptr), _api(nullptr), _args(args) {
+        _init_flow_dirs();
     }
 
     virtual ~md_service() {}
 
+#define md_ctp_req(type, c_str, fname, id, m)           \
+{                                                       \
+    type req;                                           \
+    set_field(req, c_str);                              \
+    auto nid = add_and_get();                           \
+    m.put(nid, id);                                     \
+    auto r = _api->fname(&req, nid);                    \
+    if (r != 0)                                         \
+        throw ::ctp_error(r);                           \
+}
+
     virtual void on_body(::client& client, ::body& body) {
         ::frame rsp_frame;
-        if (body.type == MESSAGE_HEARTBEAT) {
+        if (body.type == IOP_MESSAGE_HEARTBEAT) {
             // Send back the heartbeat with a new response ID.
             body.response_id = get_uuid();
-            client.send_body(body, FRAME_HEARTBEAT);
+            client.send_body(body, IOP_FRAME_HEARTBEAT);
         }
-        else if (body.type == MESSAGE_REQ_LOGIN) {
-            ctp_req(CThostFtdcReqUserLoginField, body.object.c_str(), ReqUserLogin);
+        else if (body.type == IOP_MESSAGE_REQ_LOGIN) {
+            md_ctp_req(
+                CThostFtdcReqUserLoginField,
+                body.object.c_str(),
+                ReqUserLogin,
+                body.request_id,
+                _id);
         }
-        else if (body.type == MESSAGE_REQ_LOGOUT) {
-            ctp_req(CThostFtdcUserLogoutField, body.object.c_str(), ReqUserLogout);
+        else if (body.type == IOP_MESSAGE_REQ_LOGOUT) {
+            md_ctp_req(
+                CThostFtdcUserLogoutField,
+                body.object.c_str(),
+                ReqUserLogout,
+                body.request_id,
+                _id);
         }
-        else if (body.type == MESSAGE_SUB_MD) {
+        else if (body.type == IOP_MESSAGE_SUB_MD) {
             CThostFtdcSubMarketDataField sub;
             set_field(sub, body.object.c_str());
             auto r = _api->SubscribeMarketData(sub.InstrumentID, sub.Count);
@@ -35,7 +57,7 @@ public:
             if (r != 0)
                 throw ::ctp_error(r);
         }
-        else if (body.type == MESSAGE_UNSUB_MD) {
+        else if (body.type == IOP_MESSAGE_UNSUB_MD) {
             CThostFtdcUnsubMarketDataField unsub;
             set_field(unsub, body.object.c_str());
             auto r = _api->SubscribeMarketData(unsub.InstrumentID, unsub.Count);
@@ -48,8 +70,7 @@ public:
     }
 
     virtual void on_open(::client& client) {
-        _spi = new md_spi(client);
-        _init_flow_dirs();
+        _spi = new md_spi(client, _id);
         _init_api();
     }
 
@@ -92,6 +113,7 @@ protected:
     ::md_spi*               _spi;
     ::args&                 _args;
     ::frame_encoder         _frame_encoder;
+    ::id_keeper             _id;
 };
 
 #endif

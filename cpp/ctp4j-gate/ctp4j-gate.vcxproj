@@ -153,6 +153,7 @@
     <ClInclude Include="except.h" />
     <ClInclude Include="facade.h" />
     <ClInclude Include="frame.h" />
+    <ClInclude Include="id_keeper.h" />
     <ClInclude Include="md.h" />
     <ClInclude Include="md_spi.h" />
     <ClInclude Include="message.h" />

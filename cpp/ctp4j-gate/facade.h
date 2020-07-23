@@ -9,11 +9,11 @@
 #include <WinSock2.h>
 
 int32_t c_hton(int32_t host32) {
-	return (int32_t)htonl((u_long)host32);
+    return (int32_t)htonl((u_long)host32);
 }
 
 int32_t c_ntoh(int32_t host32) {
-	return (int32_t)ntohl((u_long)host32);
+    return (int32_t)ntohl((u_long)host32);
 }
 
 #include <atomic>
@@ -39,14 +39,14 @@ std::string get_time_str(const char* format = "%Y-%m-%d %H:%M:%S") {
 #include <fstream>
 
 void print(const char* msg, const char* file = "cout.log") {
-	try {
-		std::ofstream ofs(file, std::ios::app | std::ios::out);
-		ofs << get_time_str() << " " << msg << std::endl;
-		ofs.flush();
-	}
-	catch (std::exception& e) {
-		printf("%s\n", e.what());
-	}
+    try {
+        std::ofstream ofs(file, std::ios::app | std::ios::out);
+        ofs << get_time_str() << " " << msg << std::endl;
+        ofs.flush();
+    }
+    catch (std::exception& e) {
+        printf("%s\n", e.what());
+    }
 }
 
 #include "Objbase.h"

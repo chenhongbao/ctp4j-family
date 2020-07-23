@@ -68,5 +68,8 @@
     <ClInclude Include="md_spi.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="id_keeper.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
