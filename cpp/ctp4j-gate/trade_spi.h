@@ -47,7 +47,7 @@ void _to_trade_body(::body& body, const char* type, Ty* object, CThostFtdcRspInf
 class trade_spi : public CThostFtdcTraderSpi {
 public:
     trade_spi(::client& client, ::id_keeper& keeper) : _client(client), _keeper(keeper) {
-        _keeper.put(0, "00000000-0000-0000-0000-000000000000");
+        _keeper.put(0, "0");
     }
 
     virtual void OnFrontConnected() {

@@ -46,7 +46,7 @@ void _to_md_body(::body& body, const char* type, Ty* object, CThostFtdcRspInfoFi
 class md_spi : public CThostFtdcMdSpi {
 public:
     md_spi(::client& client, ::id_keeper& keeper) : _client(client), _keeper(keeper) {
-        _keeper.put(0, "00000000-0000-0000-0000-000000000000");
+        _keeper.put(0, "0");
     }
 
     virtual ~md_spi() {}
@@ -62,10 +62,6 @@ public:
         CThostFtdcRspInfoField rsp_info{ 0 };
         disconn.Reason = nReason;
         md_rsp(IOP_MESSAGE_RSP_DISCONNECT, &disconn, &rsp_info, 0, true, _keeper);
-    }
-
-    virtual void OnRspAuthenticate(CThostFtdcRspAuthenticateField* pRspAuthenticateField, CThostFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {
-        md_rsp(IOP_MESSAGE_RSP_REQ_AUTHENTICATE, pRspAuthenticateField, pRspInfo, nRequestID, bIsLast, _keeper);
     }
 
     virtual void OnRspUserLogin(CThostFtdcRspUserLoginField* pRspUserLogin, CThostFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {
