@@ -20,6 +20,8 @@ int32_t c_ntoh(int32_t host32) {
 
 int add_and_get(int i = 1) {
     static std::atomic<int> id(1);
+    if (id.load() == INT_MAX)
+        id.store(1);
     return id.fetch_add(i);
 }
 
