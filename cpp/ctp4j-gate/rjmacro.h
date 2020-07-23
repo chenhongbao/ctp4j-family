@@ -7,8 +7,9 @@ undef and macros.
 #include "rapidjson/document.h"
 #include "rapidjson/prettywriter.h"
 
+#include "except.h"
+
 #include <string>
-#include <stdexcept>
 
 using namespace rapidjson;
 
@@ -41,7 +42,7 @@ using namespace rapidjson;
         if (CHAR_MIN <= i && i <= UCHAR_MAX)                                            \
             ref(__field__, member) = (char)(iter->value.GetInt());                      \
         else                                                                            \
-            throw std::runtime_error("flag value overflow");                            \
+            throw ::flag_error(i);                                                      \
     }                                                                                   \
 }
 
@@ -69,8 +70,7 @@ Document __doc__;                                                               
 __doc__.Parse(__json__);                                                                \
 {                                                                                       \
     if (__doc__.HasParseError())                                                        \
-        throw std::runtime_error(                                                       \
-            "json parser error " + std::to_string((int)__doc__.GetParseError()));       \
+        throw ::json_error(__doc__.GetParseError());                                    \
 }
 
 

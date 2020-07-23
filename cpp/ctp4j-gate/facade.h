@@ -16,12 +16,32 @@ int32_t c_ntoh(int32_t host32) {
 	return (int32_t)ntohl((u_long)host32);
 }
 
+#include <atomic>
+
+int add_and_get(int i = 1) {
+    static std::atomic<int> id(1);
+    return id.fetch_add(i);
+}
+
+#include <iomanip>
+#include <ctime>
+#include <sstream>
+
+std::string get_time_str(const char* format = "%Y-%m-%d %H:%M:%S") {
+    std::stringstream ss;
+    ::time_t t_c = ::time(nullptr);
+    ::tm t_m;
+    ::localtime_s(&t_m, &t_c);
+    ss << std::put_time(&t_m, format);
+    return ss.str();
+}
+
 #include <fstream>
 
-void print(const char* msg = "") {
+void print(const char* msg, const char* file = "cout.log") {
 	try {
-		std::ofstream ofs("cout.log", std::ios::app | std::ios::out);
-		ofs << msg << std::endl;
+		std::ofstream ofs(file, std::ios::app | std::ios::out);
+		ofs << get_time_str() << " " << msg << std::endl;
 		ofs.flush();
 	}
 	catch (std::exception& e) {

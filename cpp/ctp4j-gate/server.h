@@ -33,6 +33,7 @@ public:
     virtual ~server() {}
 
     void run() {
+        _init_dirs();
         _ws();
         _listen(_args.get_host().c_str(), _args.get_port().c_str());
         _serve();
@@ -47,7 +48,7 @@ protected:
         WSADATA wsaData;
         if (!up) {
             if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
-                throw std::runtime_error("winsock error(" + std::to_string(WSAGetLastError()));
+                throw ::ws_error(WSAGetLastError());
             up = true;
         }
         else {
@@ -133,14 +134,39 @@ protected:
         }
     }
 
+    void _write_req(const std::string& json) {
+        auto file = get_time_str("%Y%m%d%H%M%S") + "_" + std::to_string(add_and_get()) + ".json";
+        auto path = _flow_req_dir + "/" + file;
+        try {
+            std::ofstream osf(path, std::ios::out | std::ios::app);
+            osf.write(json.c_str(), json.length());
+            osf.flush();
+        }
+        catch (std::exception& e) {
+            print(e.what());
+        }
+    }
+
+    void _init_dirs() {
+        auto path = _args.get_flow() + "/.req";
+        if (!create_directory(path.c_str()))
+            _flow_req_dir = "";
+        else
+            _flow_req_dir = path;
+    }
+
     inline void _call_body() {
         ::body body;
-        body_decoder::decode(_decoder.back(), body);
+        ::frame& frame = _decoder.back();
+        body_decoder::decode(frame, body);
         _call_catch(_service.on_body(_client, body));
+        _write_req(frame.body);
         _decoder.pop_back();
     }
 
     SOCKET          _listen_socket;
+    std::string     _flow_req_dir;
+
     ::args&         _args;
     ::service&      _service;
     ::ws_client     _client;

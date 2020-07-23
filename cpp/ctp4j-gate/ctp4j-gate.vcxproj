@@ -150,9 +150,11 @@
   <ItemGroup>
     <ClInclude Include="args.h" />
     <ClInclude Include="client.h" />
+    <ClInclude Include="except.h" />
     <ClInclude Include="facade.h" />
     <ClInclude Include="frame.h" />
     <ClInclude Include="md.h" />
+    <ClInclude Include="md_spi.h" />
     <ClInclude Include="message.h" />
     <ClInclude Include="service.h" />
     <ClInclude Include="trade_spi.h" />

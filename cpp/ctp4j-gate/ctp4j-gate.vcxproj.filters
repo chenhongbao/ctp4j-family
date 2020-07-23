@@ -62,5 +62,11 @@
     <ClInclude Include="trade_spi.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="except.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="md_spi.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

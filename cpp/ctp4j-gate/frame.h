@@ -4,10 +4,9 @@
 #define __PARSER__
 
 #include "facade.h"
+#include "except.h"
 
 #include <vector>
-#include <string>
-#include <stdexcept>
 
 typedef int32_t             frame_type;
 typedef int32_t             frame_length;
@@ -110,7 +109,7 @@ protected:
 
 	bool _set_body() {
 		if (_decoding.length <= 0)
-			throw std::length_error("frame body length underflow");
+			throw ::frame_length_error(_decoding.length);
 		if (_index < _buffer.size()) {
 			if (_buffer.size() - _index < _decoding.length - _decoding.body.length()) {
 				while (_index < _buffer.size())
@@ -147,7 +146,7 @@ public:
 
 	static void encode(frame& frame, std::string& bytes) {
 		if (frame.length <= 0)
-			throw std::length_error("frame body length underflow");
+			throw ::frame_length_error(frame.length);
 		_append(frame.type,		bytes);
 		_append(frame.length,	bytes);
 		_append(frame.body,		bytes);

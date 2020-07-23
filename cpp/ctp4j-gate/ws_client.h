@@ -4,18 +4,9 @@
 
 #include "client.h"
 #include "message.h"
+#include "except.h"
 
-#include <stdexcept>
-#include <string>
 #include <mutex>
-
-class ws_error : public std::runtime_error {
-public:
-    ws_error(int error) : std::runtime_error("winsock error(" + std::to_string(error) + ")") {
-    }
-
-    virtual ~ws_error() {}
-};
 
 class ws_client : public client {
 public:

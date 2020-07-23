@@ -67,7 +67,7 @@ public:
     static void decode(frame& frame, body& body) {
         Document doc;
         if (doc.Parse(frame.body.c_str()).HasParseError())
-            throw std::runtime_error("parser error");
+            throw ::json_error((int)doc.GetParseError());
         _decode_string(_str(Type),         doc, body.type);
         _decode_string(_str(RequestID),    doc, body.request_id);
         _decode_string(_str(ResponseID),   doc, body.response_id);
