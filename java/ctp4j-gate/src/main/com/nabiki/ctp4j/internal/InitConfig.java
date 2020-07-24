@@ -32,9 +32,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class InitConfig {
-    public String Flow;
+    public String Flow = "";
     public List<String> Fronts = new LinkedList<>();
-    public boolean isUdp, isMulticast, isTrade;
+    public boolean isUdp =  false, isMulticast = false, isTrade = false;
 
     public InitConfig() {}
 }

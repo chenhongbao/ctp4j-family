@@ -51,9 +51,13 @@ public class CThostFtdcMdApiImpl extends CThostFtdcMdApi {
     private MdSessionAdaptor sessionAdaptor;
     private MdClientMessageAdaptor msgAdaptor;
 
-    public CThostFtdcMdApiImpl() {
-        var f = new File("ctp4j-gate.properties");
+    public CThostFtdcMdApiImpl(String flow) {
+        if (flow.trim().length() > 0)
+            this.initCfg.Flow = flow.trim();
+        else
+            this.initCfg.Flow = ".";
         try {
+            var f = new File("ctp4j-gate.properties");
             if (f.exists())
                 this.sdkCfg = SdkConfig.load(f);
             else
@@ -61,6 +65,8 @@ public class CThostFtdcMdApiImpl extends CThostFtdcMdApi {
         } catch (Throwable th) {
             throw new RuntimeException(th.getMessage(), th);
         }
+        // Set mode.
+        this.initCfg.isTrade = false;
     }
 
     @Override

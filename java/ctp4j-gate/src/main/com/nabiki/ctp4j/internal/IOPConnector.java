@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class IOPConnector {
+    public static String executablePath = "ctp4j-gate.exe";
     private IOPClient client;
     private ExternalProcess process;
 
@@ -94,7 +95,7 @@ public class IOPConnector {
 
     private void launchApp(SdkConfig sdkCfg, InitConfig initCfg) {
         this.process = new ExternalProcess(
-                new File("ctp4j-gate.exe"),
+                new File(executablePath),
                 sdkCfg.CWD,
                 sdkCfg.Redirect,
                 getCommand(sdkCfg, initCfg));
@@ -112,8 +113,15 @@ public class IOPConnector {
         this.client = IOP.createClient();
         this.client.setSessionAdaptor(sessionAdaptor);
         this.client.setMessageAdaptor(msgAdaptor);
-        this.client.connect(
-                InetSocketAddress.createUnresolved(sdkCfg.Host, sdkCfg.Port));
+        this.client.connect(new InetSocketAddress(sdkCfg.Host, sdkCfg.Port));
+        // Work around the client's login check.
+        // In client's frame handler, it checks the login status before calling
+        // adaptor. If it is not login, nothing happens. So here make it login.
+        var session = this.client.getSession();
+        if (session == null)
+            throw new IllegalStateException("session null");
+        // If the key changed in frame handler, change here too.
+        session.setAttribute("iop.islogin", true);
     }
 
     private List<String> getCommand(SdkConfig sdkCfg, InitConfig initCfg) {

@@ -74,8 +74,12 @@ public class ExternalProcess {
     }
 
     private File getRedirectFile() {
-        if (!this.redirect.isFile())
-            throw new IllegalStateException("redirect non file");
+        try {
+            if (!this.redirect.exists() && !this.redirect.createNewFile())
+                throw new IllegalStateException("redirect non file");
+        } catch (IOException e) {
+            throw new IllegalStateException("can't create redirect file");
+        }
         return this.redirect;
     }
 
