@@ -15,17 +15,6 @@ public:
 
     virtual ~trade_service() {}
 
-#define trade_ctp_req(type, c_str, fname, id, m)        \
-{                                                       \
-    type req{ 0 };                                      \
-    set_field(req, c_str);                              \
-    auto nid = add_and_get();                           \
-    m.put(nid, id);                                     \
-    auto r = _api->fname(&req, nid);                    \
-    if (r != 0)                                         \
-        throw ::ctp_error(r);                           \
-}
-
     virtual void on_body(::client& client, ::body& body) {
         ::frame rsp_frame;
         if (body.type == IOP_MESSAGE_HEARTBEAT) {
@@ -34,91 +23,92 @@ public:
             client.send_body(body, IOP_FRAME_HEARTBEAT);
         }
         else if (body.type == IOP_MESSAGE_REQ_AUTHENTICATE) {
-            trade_ctp_req(
-                CThostFtdcReqAuthenticateField,
+            ctp_req<CThostFtdcReqAuthenticateField>(
                 body.object.c_str(),
-                ReqAuthenticate,
+                std::bind(&CThostFtdcTraderApi::ReqAuthenticate, _api, std::placeholders::_1, std::placeholders::_2), 
                 body.request_id,
-                _id);
+                _id,
+                _spi);
         }
         else if (body.type == IOP_MESSAGE_REQ_LOGIN) {
-            trade_ctp_req(
-                CThostFtdcReqUserLoginField,
+            ctp_req<CThostFtdcReqUserLoginField>(
                 body.object.c_str(),
-                ReqUserLogin,
+                std::bind(&CThostFtdcTraderApi::ReqUserLogin, _api, std::placeholders::_1, std::placeholders::_2),
                 body.request_id,
-                _id);
+                _id,
+                _spi);
         }
         else if (body.type == IOP_MESSAGE_REQ_LOGOUT) {
-            trade_ctp_req(CThostFtdcUserLogoutField,
+            ctp_req<CThostFtdcUserLogoutField>(
                 body.object.c_str(),
-                ReqUserLogout,
+                std::bind(&CThostFtdcTraderApi::ReqUserLogout, _api, std::placeholders::_1, std::placeholders::_2),
                 body.request_id,
-                _id);
+                _id,
+                _spi);
         }
         else if (body.type == IOP_MESSAGE_REQ_SETTLEMENT) {
-            trade_ctp_req(
-                CThostFtdcSettlementInfoConfirmField,
+            ctp_req<CThostFtdcSettlementInfoConfirmField>(
                 body.object.c_str(),
-                ReqSettlementInfoConfirm,
+                std::bind(&CThostFtdcTraderApi::ReqSettlementInfoConfirm, _api, std::placeholders::_1, std::placeholders::_2),
                 body.request_id,
-                _id);
+                _id,
+                _spi);
         }
         else if (body.type == IOP_MESSAGE_REQ_ORDER_INSERT) {
-            trade_ctp_req(
-                CThostFtdcInputOrderField,
+            ctp_req<CThostFtdcInputOrderField>(
                 body.object.c_str(),
-                ReqOrderInsert,
+                std::bind(&CThostFtdcTraderApi::ReqOrderInsert, _api, std::placeholders::_1, std::placeholders::_2),
                 body.request_id,
-                _id);
+                _id,
+                _spi);
         }
         else if (body.type == IOP_MESSAGE_REQ_ORDER_ACTION) {
-            trade_ctp_req(
-                CThostFtdcInputOrderActionField,
+            ctp_req<CThostFtdcInputOrderActionField>(
                 body.object.c_str(),
-                ReqOrderAction,
+                std::bind(&CThostFtdcTraderApi::ReqOrderAction, _api, std::placeholders::_1, std::placeholders::_2),
                 body.request_id,
-                _id);
+                _id,
+                _spi);
         }
         else if (body.type == IOP_MESSAGE_QRY_ACCOUNT) {
-            trade_ctp_req(
-                CThostFtdcQryTradingAccountField,
+            ctp_req<CThostFtdcQryTradingAccountField>(
                 body.object.c_str(),
-                ReqQryTradingAccount,
+                std::bind(&CThostFtdcTraderApi::ReqQryTradingAccount, _api, std::placeholders::_1, std::placeholders::_2),
                 body.request_id,
-                _id);
+                _id,
+                _spi);
         }
         else if (body.type == IOP_MESSAGE_QRY_POSI_DETAIL) {
-            trade_ctp_req(
-                CThostFtdcQryInvestorPositionDetailField,
+            ctp_req<CThostFtdcQryInvestorPositionDetailField>(
                 body.object.c_str(),
-                ReqQryInvestorPositionDetail,
+                std::bind(&CThostFtdcTraderApi::ReqQryInvestorPositionDetail, _api, std::placeholders::_1, std::placeholders::_2),
                 body.request_id,
-                _id);
+                _id,
+                _spi);
         }
         else if (body.type == IOP_MESSAGE_QRY_INSTRUMENT) {
-            trade_ctp_req(
-                CThostFtdcQryInstrumentField,
+            ctp_req<CThostFtdcQryInstrumentField>(
                 body.object.c_str(),
-                ReqQryInstrument,
+                std::bind(&CThostFtdcTraderApi::ReqQryInstrument, _api, std::placeholders::_1, std::placeholders::_2),
                 body.request_id,
-                _id);
+                _id,
+                _spi);
         }
         else if (body.type == IOP_MESSAGE_QRY_COMMISSION) {
-            trade_ctp_req(
-                CThostFtdcQryInstrumentCommissionRateField,
+            ctp_req<CThostFtdcQryInstrumentCommissionRateField>(
                 body.object.c_str(),
-                ReqQryInstrumentCommissionRate,
+                std::bind(&CThostFtdcTraderApi::ReqQryInstrumentCommissionRate, _api, std::placeholders::_1, std::placeholders::_2),
                 body.request_id,
-                _id);
+                _id,
+                _spi);
         }
         else if (body.type == IOP_MESSAGE_QRY_MARGIN) {
-            trade_ctp_req(
-                CThostFtdcQryInstrumentMarginRateField,
+            ctp_req<CThostFtdcQryInstrumentMarginRateField>(
                 body.object.c_str(),
-                ReqQryInstrumentMarginRate,
+                std::bind(&CThostFtdcTraderApi::ReqQryInstrumentMarginRate, _api, std::placeholders::_1, std::placeholders::_2),
                 body.request_id,
-                _id);
+                _id,
+                _spi);
         }
         else
             throw ::message_type_error(body.type);
@@ -177,9 +167,9 @@ protected:
 
     std::string             _flow_dir;
 
-    ::CThostFtdcTraderApi*  _api;
-    ::trade_spi*            _spi;
-    ::args&                 _args;
+    ::CThostFtdcTraderApi* _api;
+    ::trade_spi* _spi;
+    ::args& _args;
     ::frame_encoder         _frame_encoder;
     ::id_keeper             _id;
 };

@@ -27,6 +27,21 @@ void gb2312_utf8_inplace(CThostFtdcOrderField* rtn) {
     strncpy_s(rtn->StatusMsg, sizeof(rtn->StatusMsg), utf8.c_str(), _TRUNCATE);
 }
 
+const char* get_api_error_msg(const int ret_code) {
+    switch (ret_code) {
+    case 0:
+        return "成功";
+    case -1:
+        return "网络连接失败";
+    case -2:
+        return "未处理请求超过许可数";
+    case -3:
+        return "每秒发送请求数超过许可数";
+    default:
+        return "未知错误";
+    }
+}
+
 template<typename Ty>
 void _to_body(::body& body, const char* type, Ty* object, CThostFtdcRspInfoField* rsp, message_id& id, int count, int total, ::id_keeper& m) {
     try {
@@ -72,6 +87,24 @@ void spi_rsp(const char* msg_type, Ty* object_ptr, CThostFtdcRspInfoField* rsp_p
     }
     if (is_last)
         count = total = 0;
+}
+
+#include <functional>
+
+template<typename Ty, typename Sy>
+void ctp_req(const char* json, std::function<int(Ty*, int)> function, std::string& id, ::id_keeper& keeper, Sy* spi) {
+    Ty req{ 0 };
+    set_field(req, json);
+    auto nid = add_and_get();
+    auto r = function(&req, nid);
+    keeper.put(nid, id);
+    if (r != 0) {
+        CThostFtdcRspInfoField rsp{ 0 };
+        rsp.ErrorID = r;
+        strcpy_s(rsp.ErrorMsg, sizeof(rsp.ErrorMsg), get_api_error_msg(r));
+        spi->OnRspError(&rsp, nid, true);
+        throw ::ctp_error(r);
+    }
 }
 
 #endif

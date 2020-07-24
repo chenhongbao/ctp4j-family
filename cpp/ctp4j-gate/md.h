@@ -15,17 +15,6 @@ public:
 
     virtual ~md_service() {}
 
-#define md_ctp_req(type, c_str, fname, id, m)           \
-{                                                       \
-    type req{ 0 };                                      \
-    set_field(req, c_str);                              \
-    auto nid = add_and_get();                           \
-    m.put(nid, id);                                     \
-    auto r = _api->fname(&req, nid);                    \
-    if (r != 0)                                         \
-        throw ::ctp_error(r);                           \
-}
-
     virtual void on_body(::client& client, ::body& body) {
         ::frame rsp_frame;
         if (body.type == IOP_MESSAGE_HEARTBEAT) {
@@ -34,20 +23,20 @@ public:
             client.send_body(body, IOP_FRAME_HEARTBEAT);
         }
         else if (body.type == IOP_MESSAGE_REQ_LOGIN) {
-            md_ctp_req(
-                CThostFtdcReqUserLoginField,
+            ctp_req<CThostFtdcReqUserLoginField>(
                 body.object.c_str(),
-                ReqUserLogin,
+                std::bind(&CThostFtdcMdApi::ReqUserLogin, _api, std::placeholders::_1, std::placeholders::_2),
                 body.request_id,
-                _id);
+                _id,
+                _spi);
         }
         else if (body.type == IOP_MESSAGE_REQ_LOGOUT) {
-            md_ctp_req(
-                CThostFtdcUserLogoutField,
+            ctp_req<CThostFtdcUserLogoutField>(
                 body.object.c_str(),
-                ReqUserLogout,
+                std::bind(&CThostFtdcMdApi::ReqUserLogout, _api, std::placeholders::_1, std::placeholders::_2),
                 body.request_id,
-                _id);
+                _id,
+                _spi);
         }
         else if (body.type == IOP_MESSAGE_SUB_MD) {
             CThostFtdcSubMarketDataField sub;
