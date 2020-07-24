@@ -51,11 +51,13 @@ public class CThostFtdcMdApiImpl extends CThostFtdcMdApi {
     private MdSessionAdaptor sessionAdaptor;
     private MdClientMessageAdaptor msgAdaptor;
 
-    public CThostFtdcMdApiImpl(String flow) {
+    public CThostFtdcMdApiImpl(String flow, boolean udp, boolean multicast) {
         if (flow.trim().length() > 0)
             this.initCfg.Flow = flow.trim();
         else
             this.initCfg.Flow = ".";
+        this.initCfg.isUdp = udp;
+        this.initCfg.isMulticast = multicast;
         try {
             var f = new File("ctp4j-gate.properties");
             if (f.exists())
