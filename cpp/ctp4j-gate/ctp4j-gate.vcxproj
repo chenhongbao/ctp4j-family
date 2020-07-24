@@ -158,6 +158,7 @@
     <ClInclude Include="md_spi.h" />
     <ClInclude Include="message.h" />
     <ClInclude Include="service.h" />
+    <ClInclude Include="spi_common.h" />
     <ClInclude Include="trade_spi.h" />
     <ClInclude Include="ws_client.h" />
     <ClInclude Include="rjmacro.h" />

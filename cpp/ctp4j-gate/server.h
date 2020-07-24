@@ -96,7 +96,7 @@ protected:
             WSACleanup();
             throw ws_error(WSAGetLastError());
         }
-        _client._set_socket(client_socket);
+        _client.set_socket(client_socket);
         return client_socket;
     }
 
@@ -114,7 +114,7 @@ protected:
                 else {
                     // Socket is closed or error.
                     _call_catch(_service.on_close());
-                    _client._set_socket(0);
+                    _client.set_socket(0);
                     closesocket(client);
                 }
             } while (r > 0);

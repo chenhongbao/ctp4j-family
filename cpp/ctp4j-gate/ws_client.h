@@ -30,7 +30,10 @@ public:
         }
     }
 
-    friend class server;
+    void set_socket(SOCKET sock) {
+        std::unique_lock<std::mutex> lock(_send_mutex);
+        _set_socket(sock);
+    }
 
 protected:
     bool _is_valid() {
@@ -53,7 +56,6 @@ protected:
     }
 
     void _set_socket(SOCKET sock) {
-        std::unique_lock<std::mutex> lock(_send_mutex);
         _socket = sock;
     }
 

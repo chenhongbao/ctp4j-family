@@ -17,7 +17,7 @@ public:
 
 #define md_ctp_req(type, c_str, fname, id, m)           \
 {                                                       \
-    type req;                                           \
+    type req{ 0 };                                      \
     set_field(req, c_str);                              \
     auto nid = add_and_get();                           \
     m.put(nid, id);                                     \
@@ -110,11 +110,11 @@ protected:
     std::string _get_flow() {
         auto path = _args.get_flow();
         if (path.length() == 0)
-            path = ".trader\\";
+            path = ".md\\";
         else if (path.back() == '/' || path.back() == '\\')
-            path += ".trade" + path.back();
+            path += ".md" + path.back();
         else
-            path += "\\.trade\\";
+            path += "\\.md\\";
         return path;
     }
 

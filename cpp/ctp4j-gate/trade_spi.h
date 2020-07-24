@@ -6,74 +6,9 @@
 #include "client.h"
 #include "message.h"
 #include "id_keeper.h"
+#include "spi_common.h"
 
 #include "ThostFtdcTraderApi.h"
-
-template<typename Ty>
-void _to_trade_body(::body& body, const char* type, Ty* object, CThostFtdcRspInfoField* rsp, message_id& id, int count, int total, ::id_keeper& m) {
-    try {
-        body.request_id = id;
-        body.response_id = get_uuid();
-        body.current_count = count;
-        body.total_count = total;
-        body.type = type;
-        get_field(*object, body.object);
-        get_field(*rsp, body.rsp_info);
-    }
-    catch (std::exception& e) {
-        print(e.what());
-    }
-}
-
-#define trader_rsp(msg_type, object_ptr, rsp_ptr, nid, is_last, keeper)                                                 \
-    if (object_ptr == nullptr) {                                                                                        \
-        auto str = std::string(msg_type) + ", ctp rsp null";                                                            \
-        print(str.c_str());                                                                                             \
-        return;                                                                                                         \
-    }                                                                                                                   \
-    static int count = 0, total = 0;                                                                                    \
-    ::body body;                                                                                                        \
-    ::message_id id;                                                                                                    \
-    CThostFtdcRspInfoField tmp_rsp{ 0 };                                                                                \
-    try {                                                                                                               \
-        id = _keeper.get_id(nid);                                                                                       \
-        ++count;                                                                                                        \
-        if (is_last)                                                                                                    \
-            total = count;                                                                                              \
-        if (rsp_ptr != nullptr) {                                                                                       \
-            _gb2312_utf8_inplace(rsp_ptr);                                                                              \
-            _to_trade_body(body, msg_type, object_ptr, rsp_ptr, id, count, total, keeper);                              \
-        }                                                                                                               \
-        else                                                                                                            \
-            _to_trade_body(body, msg_type, object_ptr, &tmp_rsp, id, count, total, keeper);                             \
-        _send(body);                                                                                                    \
-    }                                                                                                                   \
-    catch (std::exception& e) {                                                                                         \
-        print(e.what());                                                                                                \
-    }                                                                                                                   \
-    if (is_last)                                                                                                        \
-        count = total = 0;
-
-void _gb2312_utf8_inplace(CThostFtdcInstrumentField* instrument) {
-    if (instrument == nullptr)
-        return;
-    auto utf8 = convert_gb2312_utf8(instrument->InstrumentName);
-    strncpy_s(instrument->InstrumentName, sizeof(instrument->InstrumentName), utf8.c_str(), _TRUNCATE);
-}
-
-void _gb2312_utf8_inplace(CThostFtdcRspInfoField* rsp_info) {
-    if (rsp_info == nullptr)
-        return;
-    auto utf8 = convert_gb2312_utf8(rsp_info->ErrorMsg);
-    strncpy_s(rsp_info->ErrorMsg, sizeof(rsp_info->ErrorMsg), utf8.c_str(), _TRUNCATE);
-}
-
-void _gb2312_utf8_inplace(CThostFtdcOrderField* rtn) {
-    if (rtn == nullptr)
-        return;
-    auto utf8 = convert_gb2312_utf8(rtn->StatusMsg);
-    strncpy_s(rtn->StatusMsg, sizeof(rtn->StatusMsg), utf8.c_str(), _TRUNCATE);
-}
 
 class trade_spi : public CThostFtdcTraderSpi {
 public:
@@ -84,89 +19,85 @@ public:
     virtual void OnFrontConnected() {
         CThostFtdcConnectField conn;
         CThostFtdcRspInfoField rsp_info{ 0 };
-        trader_rsp(IOP_MESSAGE_RSP_CONNECT, &conn, &rsp_info, 0, true, _keeper);
+        spi_rsp(IOP_MESSAGE_RSP_CONNECT, &conn, &rsp_info, 0, true, _keeper, _client);
     }
 
     virtual void OnFrontDisconnected(int nReason) {
         CThostFtdcDisconnect disconn;
         CThostFtdcRspInfoField rsp_info{ 0 };
         disconn.Reason = nReason;
-        trader_rsp(IOP_MESSAGE_RSP_DISCONNECT, &disconn, &rsp_info, 0, true, _keeper);
+        spi_rsp(IOP_MESSAGE_RSP_DISCONNECT, &disconn, &rsp_info, 0, true, _keeper, _client);
     }
 
     virtual void OnRspAuthenticate(CThostFtdcRspAuthenticateField* pRspAuthenticateField, CThostFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {
-        trader_rsp(IOP_MESSAGE_RSP_REQ_AUTHENTICATE, pRspAuthenticateField, pRspInfo, nRequestID, bIsLast, _keeper);
+        spi_rsp(IOP_MESSAGE_RSP_REQ_AUTHENTICATE, pRspAuthenticateField, pRspInfo, nRequestID, bIsLast, _keeper, _client);
     }
 
     virtual void OnRspUserLogin(CThostFtdcRspUserLoginField* pRspUserLogin, CThostFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {
-        trader_rsp(IOP_MESSAGE_RSP_REQ_LOGIN, pRspUserLogin, pRspInfo, nRequestID, bIsLast, _keeper);
+        spi_rsp(IOP_MESSAGE_RSP_REQ_LOGIN, pRspUserLogin, pRspInfo, nRequestID, bIsLast, _keeper, _client);
     }
 
     virtual void OnRspUserLogout(CThostFtdcUserLogoutField* pUserLogout, CThostFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {
-        trader_rsp(IOP_MESSAGE_RSP_REQ_LOGOUT, pUserLogout, pRspInfo, nRequestID, bIsLast, _keeper);
+        spi_rsp(IOP_MESSAGE_RSP_REQ_LOGOUT, pUserLogout, pRspInfo, nRequestID, bIsLast, _keeper, _client);
     }
 
     virtual void OnRspOrderInsert(CThostFtdcInputOrderField* pInputOrder, CThostFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {
-        trader_rsp(IOP_MESSAGE_RSP_ORDER_INSERT, pInputOrder, pRspInfo, nRequestID, bIsLast, _keeper);
+        spi_rsp(IOP_MESSAGE_RSP_ORDER_INSERT, pInputOrder, pRspInfo, nRequestID, bIsLast, _keeper, _client);
     }
 
     virtual void OnRspOrderAction(CThostFtdcInputOrderActionField* pInputOrderAction, CThostFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {
-        trader_rsp(IOP_MESSAGE_RSP_ORDER_ACTION, pInputOrderAction, pRspInfo, nRequestID, bIsLast, _keeper);
+        spi_rsp(IOP_MESSAGE_RSP_ORDER_ACTION, pInputOrderAction, pRspInfo, nRequestID, bIsLast, _keeper, _client);
     }
 
     virtual void OnRspSettlementInfoConfirm(CThostFtdcSettlementInfoConfirmField* pSettlementInfoConfirm, CThostFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {
-        trader_rsp(IOP_MESSAGE_RSP_REQ_SETTLEMENT, pSettlementInfoConfirm, pRspInfo, nRequestID, bIsLast, _keeper);
+        spi_rsp(IOP_MESSAGE_RSP_REQ_SETTLEMENT, pSettlementInfoConfirm, pRspInfo, nRequestID, bIsLast, _keeper, _client);
     }
 
     virtual void OnRspQryTradingAccount(CThostFtdcTradingAccountField* pTradingAccount, CThostFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {
-        trader_rsp(IOP_MESSAGE_RSP_QRY_ACCOUNT, pTradingAccount, pRspInfo, nRequestID, bIsLast, _keeper);
+        spi_rsp(IOP_MESSAGE_RSP_QRY_ACCOUNT, pTradingAccount, pRspInfo, nRequestID, bIsLast, _keeper, _client);
     }
 
     virtual void OnRspQryInstrumentMarginRate(CThostFtdcInstrumentMarginRateField* pInstrumentMarginRate, CThostFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {
-        trader_rsp(IOP_MESSAGE_RSP_QRY_MARGIN, pInstrumentMarginRate, pRspInfo, nRequestID, bIsLast, _keeper);
+        spi_rsp(IOP_MESSAGE_RSP_QRY_MARGIN, pInstrumentMarginRate, pRspInfo, nRequestID, bIsLast, _keeper, _client);
     }
 
     virtual void OnRspQryInstrumentCommissionRate(CThostFtdcInstrumentCommissionRateField* pInstrumentCommissionRate, CThostFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {
-        trader_rsp(IOP_MESSAGE_RSP_QRY_COMMISSION, pInstrumentCommissionRate, pRspInfo, nRequestID, bIsLast, _keeper);
+        spi_rsp(IOP_MESSAGE_RSP_QRY_COMMISSION, pInstrumentCommissionRate, pRspInfo, nRequestID, bIsLast, _keeper, _client);
     }
 
     virtual void OnRspQryInstrument(CThostFtdcInstrumentField* pInstrument, CThostFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {
-        _gb2312_utf8_inplace(pInstrument);
-        trader_rsp(IOP_MESSAGE_RSP_QRY_INSTRUMENT, pInstrument, pRspInfo, nRequestID, bIsLast, _keeper);
+        gb2312_utf8_inplace(pInstrument);
+        spi_rsp(IOP_MESSAGE_RSP_QRY_INSTRUMENT, pInstrument, pRspInfo, nRequestID, bIsLast, _keeper, _client);
     }
 
     virtual void OnRspQryInvestorPositionDetail(CThostFtdcInvestorPositionDetailField* pInvestorPositionDetail, CThostFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {
-        trader_rsp(IOP_MESSAGE_RSP_QRY_POSI_DETAIL, pInvestorPositionDetail, pRspInfo, nRequestID, bIsLast, _keeper);
+        spi_rsp(IOP_MESSAGE_RSP_QRY_POSI_DETAIL, pInvestorPositionDetail, pRspInfo, nRequestID, bIsLast, _keeper, _client);
     }
 
     virtual void OnRspError(CThostFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {
-        trader_rsp(IOP_MESSAGE_RSP_ERROR, pRspInfo, pRspInfo, nRequestID, bIsLast, _keeper);
+        spi_rsp(IOP_MESSAGE_RSP_ERROR, pRspInfo, pRspInfo, nRequestID, bIsLast, _keeper, _client);
     }
 
     virtual void OnRtnOrder(CThostFtdcOrderField* pOrder) {
         CThostFtdcRspInfoField rsp_info{ 0 };
-        _gb2312_utf8_inplace(pOrder);
-        trader_rsp(IOP_MESSAGE_RTN_ORDER, pOrder, &rsp_info, 0, true, _keeper);
+        gb2312_utf8_inplace(pOrder);
+        spi_rsp(IOP_MESSAGE_RTN_ORDER, pOrder, &rsp_info, 0, true, _keeper, _client);
     }
 
     virtual void OnRtnTrade(CThostFtdcTradeField* pTrade) {
         CThostFtdcRspInfoField rsp_info{ 0 };
-        trader_rsp(IOP_MESSAGE_RTN_TRADE, pTrade, &rsp_info, 0, true, _keeper);
+        spi_rsp(IOP_MESSAGE_RTN_TRADE, pTrade, &rsp_info, 0, true, _keeper, _client);
     }
 
     virtual void OnErrRtnOrderInsert(CThostFtdcInputOrderField* pInputOrder, CThostFtdcRspInfoField* pRspInfo) {
-        trader_rsp(IOP_MESSAGE_RTN_ORDER_INSERT, pInputOrder, pRspInfo, 0, true, _keeper);
+        spi_rsp(IOP_MESSAGE_RTN_ORDER_INSERT, pInputOrder, pRspInfo, 0, true, _keeper, _client);
     }
 
     virtual void OnErrRtnOrderAction(CThostFtdcOrderActionField* pOrderAction, CThostFtdcRspInfoField* pRspInfo) {
-        trader_rsp(IOP_MESSAGE_RTN_ORDER_ACTION, pOrderAction, pRspInfo, 0, true, _keeper);
+        spi_rsp(IOP_MESSAGE_RTN_ORDER_ACTION, pOrderAction, pRspInfo, 0, true, _keeper, _client);
     }
 
 private:
-    int _send(::body& body) {
-        return (int)_client.send_body(body, IOP_FRAME_RESPONSE);
-    }
-
     ::client& _client;
     ::id_keeper& _keeper;
 };

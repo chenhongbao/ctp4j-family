@@ -21,6 +21,7 @@ public:
     }
 
     const std::string& get_id(int n_id) {
+        std::unique_lock<std::mutex> lock(_mutex);
         auto iter = _id.find(n_id);
         if (iter == _id.end())
             throw ::nid_not_found(n_id);
