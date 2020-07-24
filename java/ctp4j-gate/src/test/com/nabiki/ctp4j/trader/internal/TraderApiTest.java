@@ -37,6 +37,7 @@ import com.nabiki.iop.x.OP;
 import com.nabiki.iop.x.SystemStream;
 
 import java.io.File;
+import java.util.concurrent.CountDownLatch;
 
 
 public class TraderApiTest {
@@ -240,6 +241,8 @@ public class TraderApiTest {
         public void OnRtnOrder(CThostFtdcOrderField order) {
             System.out.println("OnRtnOrder");
             System.out.println(OP.toJson(order));
+            if (order.OrderStatus == TThostFtdcOrderStatusType.NO_TRADE_QUEUEING)
+                rtnOrder = order;
         }
 
         @Override
@@ -304,7 +307,7 @@ public class TraderApiTest {
         qryInstrument.InstrumentID = "";
         api.ReqQryInstrument(qryInstrument, ++id);
 
-        sleep(1000);
+        sleep(15000);
 
         var qryCommission = new CThostFtdcQryInstrumentCommissionRateField();
         qryCommission.InstrumentID = "c2101";
@@ -337,10 +340,11 @@ public class TraderApiTest {
         order.InvestorID = "144287";
         order.BrokerID = "9999";
         order.InstrumentID = "c2101";
+        order.OrderPriceType = TThostFtdcOrderPriceTypeType.LIMIT_PRICE;
         order.CombOffsetFlag = TThostFtdcCombOffsetFlagType.OFFSET_OPEN;
         order.CombHedgeFlag = TThostFtdcCombHedgeFlagType.SPECULATION;
         order.VolumeTotalOriginal = 3;
-        order.LimitPrice = 2200;
+        order.LimitPrice = 2230;
         order.Direction = TThostFtdcDirectionType.DIRECTION_BUY;
         order.OrderRef = Integer.toString(++id);
         order.VolumeCondition = TThostFtdcVolumeConditionType.ANY_VOLUME;
@@ -365,17 +369,19 @@ public class TraderApiTest {
         // Close position, then cancel the close order.
         order.CombOffsetFlag = TThostFtdcCombOffsetFlagType.OFFSET_CLOSE_TODAY;
         order.Direction = TThostFtdcDirectionType.DIRECTION_SELL;
-        order.LimitPrice = 2220;
+        order.LimitPrice = 2230;
         order.VolumeTotalOriginal = 1;
         order.OrderRef = Integer.toString(++id);
         api.ReqOrderInsert(order, ++id);
 
-        sleep(1000);
+        sleep(5000);
+        System.out.println("\"" + rtnOrder.OrderSysID + "\"");
 
         var action = new CThostFtdcInputOrderActionField();
         action.BrokerID = "9999";
         action.UserID = action.InvestorID = "144287";
         action.OrderSysID = rtnOrder.OrderSysID;
+        action.ExchangeID = "DCE";
         action.InstrumentID = "c2101";
         action.ActionFlag = TThostFtdcActionFlagType.DELETE;
         api.ReqOrderAction(action, ++id);
@@ -383,5 +389,10 @@ public class TraderApiTest {
 
     public static void main(String[] args) {
         new TraderApiTest().basic();
+        try {
+            new CountDownLatch(1).await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
