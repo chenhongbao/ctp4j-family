@@ -26,15 +26,24 @@ void _to_trade_body(::body& body, const char* type, Ty* object, CThostFtdcRspInf
 }
 
 #define trader_rsp(msg_type, object_ptr, rsp_ptr, nid, is_last, keeper)                                                 \
+    if (object_ptr == nullptr) {                                                                                        \
+        auto str = std::string(msg_type) + ", ctp rsp null";                                                            \
+        print(str.c_str());                                                                                             \
+        return;                                                                                                         \
+    }                                                                                                                   \
     static int count = 0, total = 0;                                                                                    \
     ::body body;                                                                                                        \
     ::message_id id;                                                                                                    \
+    CThostFtdcRspInfoField tmp_rsp{ 0 };                                                                                \
     try {                                                                                                               \
         id = _keeper.get_id(nid);                                                                                       \
         ++count;                                                                                                        \
         if (is_last)                                                                                                    \
             total = count;                                                                                              \
-        _to_trade_body(body, msg_type, object_ptr, rsp_ptr, id, count, total, keeper);                                  \
+        if (rsp_ptr != nullptr)                                                                                         \
+            _to_trade_body(body, msg_type, object_ptr, rsp_ptr, id, count, total, keeper);                              \
+        else                                                                                                            \
+            _to_trade_body(body, msg_type, object_ptr, &tmp_rsp, id, count, total, keeper);                             \
         _send(body);                                                                                                    \
     }                                                                                                                   \
     catch (std::exception& e) {                                                                                         \
@@ -134,8 +143,8 @@ private:
         return (int)_client.send_body(body, IOP_FRAME_RESPONSE);
     }
 
-    ::client&       _client;
-    ::id_keeper&    _keeper;
+    ::client& _client;
+    ::id_keeper& _keeper;
 };
 
 #endif

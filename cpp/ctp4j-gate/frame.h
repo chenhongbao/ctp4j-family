@@ -93,15 +93,19 @@ protected:
         return c_ntoh(*p);
     }
 
+    inline bool _can_decode_int32() {
+        return _buffer.size() - _index >= sizeof(int32_t);
+    }
+
     bool _set_type() {
-        if (_buffer.size() < 4)
+        if (!_can_decode_int32())
             return false;
         _decoding.type = _decode_int32();
         return true;
     }
 
     bool _set_length() {
-        if (_buffer.size() < 4)
+        if (!_can_decode_int32())
             return false;
         _decoding.length = _decode_int32();
         return true;
@@ -147,9 +151,9 @@ public:
     static void encode(frame& frame, std::string& bytes) {
         if (frame.length <= 0)
             throw ::frame_length_error(frame.length);
-        _append(frame.type,        bytes);
-        _append(frame.length,    bytes);
-        _append(frame.body,        bytes);
+        _append(frame.type,     bytes);
+        _append(frame.length,   bytes);
+        _append(frame.body,     bytes);
     }
 
 protected:

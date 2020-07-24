@@ -77,8 +77,8 @@ protected:
             _port = p;
         // flow.
         p = _get_arg("--flow", argc, argv);
-        if (p == nullptr)
-            _flow = ".";
+        if (p == nullptr || strcmp(p, ".") == 0)
+            _flow = "";
         else
             _flow = p;
         // front addresses.

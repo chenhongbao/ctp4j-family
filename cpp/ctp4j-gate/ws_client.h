@@ -22,14 +22,9 @@ public:
         return _send(_json.c_str(), _json.length());
     }
 
-    bool is_valid() {
-        std::unique_lock<std::mutex> lock(_send_mutex);
-        return _socket != 0;
-    }
-
     void close() {
         std::unique_lock<std::mutex> lock(_send_mutex);
-        if (is_valid()) {
+        if (_is_valid()) {
             closesocket(_socket);
             _socket = 0;
         }
@@ -38,10 +33,13 @@ public:
     friend class server;
 
 protected:
+    bool _is_valid() {
+        return _socket != 0;
+    }
+
     size_t _send(const char* src, const size_t length) {
-        if (!is_valid())
+        if (!_is_valid())
             return SOCKET_ERROR;
-        std::unique_lock<std::mutex> lock(_send_mutex);
         size_t sent = 0;
         while (sent < length) {
             int r = 0;

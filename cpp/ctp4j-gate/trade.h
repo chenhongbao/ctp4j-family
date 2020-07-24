@@ -17,7 +17,7 @@ public:
 
 #define trade_ctp_req(type, c_str, fname, id, m)        \
 {                                                       \
-    type req;                                           \
+    type req{ 0 };                                      \
     set_field(req, c_str);                              \
     auto nid = add_and_get();                           \
     m.put(nid, id);                                     \
@@ -65,12 +65,21 @@ public:
                 _id);
         }
         else if (body.type == IOP_MESSAGE_REQ_ORDER_INSERT) {
+            /*
             trade_ctp_req(
                 CThostFtdcInputOrderField,
                 body.object.c_str(),
                 ReqOrderInsert,
                 body.request_id,
                 _id);
+                */
+            CThostFtdcInputOrderField req;
+            set_field(req, body.object.c_str());
+            auto nid = add_and_get();
+            _id.put(nid, body.request_id);
+            auto r = _api->ReqOrderInsert(&req, nid);
+            if (r != 0)
+                throw ::ctp_error(r);
         }
         else if (body.type == IOP_MESSAGE_REQ_ORDER_ACTION) {
             trade_ctp_req(
@@ -102,7 +111,7 @@ public:
                 body.object.c_str(),
                 ReqQryInstrument,
                 body.request_id,
-                _id);
+                _id);      
         }
         else if (body.type == IOP_MESSAGE_QRY_COMMISSION) {
             trade_ctp_req(
@@ -157,18 +166,29 @@ protected:
     }
 
     void _init_flow_dirs() {
-        auto path = _args.get_flow() + "/.trade";
+        auto path = _get_flow();
         if (!create_directory(path.c_str()))
             _flow_dir = "";
         else
             _flow_dir = path;
     }
 
+    std::string _get_flow() {
+        auto path = _args.get_flow();
+        if (path.length() == 0)
+            path = ".trader\\";
+        else if (path.back() == '/' || path.back() == '\\')
+            path += ".trade" + path.back();
+        else
+            path += "\\.trade\\";
+        return path;
+    }
+
     std::string             _flow_dir;
 
-    ::CThostFtdcTraderApi*  _api;
-    ::trade_spi*            _spi;
-    ::args&                 _args;
+    ::CThostFtdcTraderApi* _api;
+    ::trade_spi* _spi;
+    ::args& _args;
     ::frame_encoder         _frame_encoder;
     ::id_keeper             _id;
 };

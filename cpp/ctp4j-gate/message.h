@@ -97,7 +97,7 @@ class body_encoder {
 public:
     static void encode(body& body, frame& frame, frame_type type) {
         StringBuffer sb;
-        Writer<StringBuffer> wr;
+        Writer<StringBuffer> wr(sb);
         wr.StartObject();
         _encode_string(wr,  _str(Type),         body.type);
         _encode_string(wr,  _str(RequestID),    body.request_id);
