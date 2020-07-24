@@ -58,14 +58,21 @@ void _gb2312_utf8_inplace(CThostFtdcInstrumentField* instrument) {
     if (instrument == nullptr)
         return;
     auto utf8 = convert_gb2312_utf8(instrument->InstrumentName);
-    strcpy_s(instrument->InstrumentName, sizeof(instrument->InstrumentName), utf8.c_str());
+    strncpy_s(instrument->InstrumentName, sizeof(instrument->InstrumentName), utf8.c_str(), _TRUNCATE);
 }
 
 void _gb2312_utf8_inplace(CThostFtdcRspInfoField* rsp_info) {
     if (rsp_info == nullptr)
         return;
     auto utf8 = convert_gb2312_utf8(rsp_info->ErrorMsg);
-    strcpy_s(rsp_info->ErrorMsg, sizeof(rsp_info->ErrorMsg), utf8.c_str());
+    strncpy_s(rsp_info->ErrorMsg, sizeof(rsp_info->ErrorMsg), utf8.c_str(), _TRUNCATE);
+}
+
+void _gb2312_utf8_inplace(CThostFtdcOrderField* rtn) {
+    if (rtn == nullptr)
+        return;
+    auto utf8 = convert_gb2312_utf8(rtn->StatusMsg);
+    strncpy_s(rtn->StatusMsg, sizeof(rtn->StatusMsg), utf8.c_str(), _TRUNCATE);
 }
 
 class trade_spi : public CThostFtdcTraderSpi {
@@ -138,6 +145,7 @@ public:
 
     virtual void OnRtnOrder(CThostFtdcOrderField* pOrder) {
         CThostFtdcRspInfoField rsp_info{ 0 };
+        _gb2312_utf8_inplace(pOrder);
         trader_rsp(IOP_MESSAGE_RTN_ORDER, pOrder, &rsp_info, 0, true, _keeper);
     }
 

@@ -145,11 +145,22 @@ protected:
     }
 
     void _init_dirs() {
-        auto path = _args.get_flow() + "/.req";
+        auto path = _get_flow();
         if (!create_directory(path.c_str()))
             _flow_req_dir = "";
         else
             _flow_req_dir = path;
+    }
+
+    std::string _get_flow() {
+        auto path = _args.get_flow();
+        if (path.length() == 0)
+            path = ".req\\";
+        else if (path.back() == '/' || path.back() == '\\')
+            path += ".req" + path.back();
+        else
+            path += "\\.req\\";
+        return path;
     }
 
     inline void _call_body() {

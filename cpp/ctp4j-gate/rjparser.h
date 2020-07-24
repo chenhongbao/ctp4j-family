@@ -109,7 +109,7 @@ setter_def(CThostFtdcInputOrderActionField) {
     set_int(SessionID);
     set_string(ExchangeID);
     set_string(OrderSysID);
-    set_flag(ActionFlag);
+    set_flag(ActionFlag, ActionFlag);
     set_double(LimitPrice);
     set_int(VolumeChange);
     set_string(UserID);
@@ -146,19 +146,19 @@ setter_def(CThostFtdcInputOrderField) {
     set_string(InstrumentID);
     set_string(OrderRef);
     set_string(UserID);
-    set_flag(OrderPriceType);
-    set_flag(Direction);
-    set_flag(CombOffsetFlag[0]);
-    set_flag(CombHedgeFlag[0]);
+    set_flag(OrderPriceType, OrderPriceType);
+    set_flag(Direction, Direction);
+    set_flag(CombOffsetFlag[0], CombOffsetFlag);
+    set_flag(CombHedgeFlag[0], CombHedgeFlag);
     set_double(LimitPrice);
     set_int(VolumeTotalOriginal);
-    set_flag(TimeCondition);
+    set_flag(TimeCondition, TimeCondition);
     set_string(GTDDate);
-    set_flag(VolumeCondition);
+    set_flag(VolumeCondition, VolumeCondition);
     set_int(MinVolume);
-    set_flag(ContingentCondition);
+    set_flag(ContingentCondition, ContingentCondition);
     set_double(StopPrice);
-    set_flag(ForceCloseReason);
+    set_flag(ForceCloseReason, ForceCloseReason);
     set_int(IsAutoSuspend);
     set_string(BusinessUnit);
     set_int(RequestID);
@@ -209,7 +209,7 @@ getter_def(CThostFtdcInputOrderField) {
 setter_def(CThostFtdcInstrumentCommissionRateField) {
     parse_or_throw();
     set_string(InstrumentID);
-    set_flag(InvestorRange);
+    set_flag(InvestorRange, InvestorRange);
     set_string(BrokerID);
     set_string(InvestorID);
     set_double(OpenRatioByMoney);
@@ -219,7 +219,7 @@ setter_def(CThostFtdcInstrumentCommissionRateField) {
     set_double(CloseTodayRatioByMoney);
     set_double(CloseTodayRatioByVolume);
     set_string(ExchangeID);
-    set_flag(BizType);
+    set_flag(BizType, BizType);
     set_string(InvestUnitID);
 }
 getter_def(CThostFtdcInstrumentCommissionRateField) {
@@ -246,7 +246,7 @@ setter_def(CThostFtdcInstrumentField) {
     set_string(InstrumentName);
     set_string(ExchangeInstID);
     set_string(ProductID);
-    set_flag(ProductClass);
+    set_flag(ProductClass, ProductClass);
     set_int(DeliveryYear);
     set_int(DeliveryMonth);
     set_int(MaxMarketOrderVolume);
@@ -260,18 +260,18 @@ setter_def(CThostFtdcInstrumentField) {
     set_string(ExpireDate);
     set_string(StartDelivDate);
     set_string(EndDelivDate);
-    set_flag(InstLifePhase);
+    set_flag(InstLifePhase, InstLifePhase);
     set_int(IsTrading);
-    set_flag(PositionType);
-    set_flag(PositionDateType);
+    set_flag(PositionType, PositionType);
+    set_flag(PositionDateType, PositionDateType);
     set_double(LongMarginRatio);
     set_double(ShortMarginRatio);
-    set_flag(MaxMarginSideAlgorithm);
+    set_flag(MaxMarginSideAlgorithm, MaxMarginSideAlgorithm);
     set_string(UnderlyingInstrID);
     set_double(StrikePrice);
-    set_flag(OptionsType);
+    set_flag(OptionsType, OptionsType);
     set_double(UnderlyingMultiple);
-    set_flag(CombinationType);
+    set_flag(CombinationType, CombinationType);
 }
 getter_def(CThostFtdcInstrumentField) {
     document();
@@ -311,10 +311,10 @@ getter_def(CThostFtdcInstrumentField) {
 setter_def(CThostFtdcInstrumentMarginRateField) {
     parse_or_throw();
     set_string(InstrumentID);
-    set_flag(InvestorRange);
+    set_flag(InvestorRange, InvestorRange);
     set_string(BrokerID);
     set_string(InvestorID);
-    set_flag(HedgeFlag);
+    set_flag(HedgeFlag, HedgeFlag);
     set_double(LongMarginRatioByMoney);
     set_double(LongMarginRatioByVolume);
     set_double(ShortMarginRatioByMoney);
@@ -344,15 +344,15 @@ setter_def(CThostFtdcInvestorPositionDetailField) {
     set_string(InstrumentID);
     set_string(BrokerID);
     set_string(InvestorID);
-    set_flag(HedgeFlag);
-    set_flag(Direction);
+    set_flag(HedgeFlag, HedgeFlag);
+    set_flag(Direction, Direction);
     set_string(OpenDate);
     set_string(TradeID);
     set_int(Volume);
     set_double(OpenPrice);
     set_string(TradingDay);
     set_int(SettlementID);
-    set_flag(TradeType);
+    set_flag(TradeType, TradeType);
     set_string(CombInstrumentID);
     set_string(ExchangeID);
     set_double(CloseProfitByDate);
@@ -407,9 +407,9 @@ setter_def(CThostFtdcInvestorPositionField) {
     set_string(InstrumentID);
     set_string(BrokerID);
     set_string(InvestorID);
-    set_flag(PosiDirection);
-    set_flag(HedgeFlag);
-    set_flag(PositionDate);
+    set_flag(PosiDirection, PosiDirection);
+    set_flag(HedgeFlag, HedgeFlag);
+    set_flag(PositionDate, PositionDate);
     set_int(YdPosition);
     set_int(Position);
     set_int(LongFrozen);
@@ -514,7 +514,7 @@ setter_def(CThostFtdcOrderActionField) {
     set_int(SessionID);
     set_string(ExchangeID);
     set_string(OrderSysID);
-    set_flag(ActionFlag);
+    set_flag(ActionFlag, ActionFlag);
     set_double(LimitPrice);
     set_int(VolumeChange);
     set_string(ActionDate);
@@ -526,7 +526,7 @@ setter_def(CThostFtdcOrderActionField) {
     set_string(ParticipantID);
     set_string(ClientID);
     set_string(BusinessUnit);
-    set_flag(OrderActionStatus);
+    set_flag(OrderActionStatus, OrderActionStatus);
     set_string(UserID);
     set_string(StatusMsg);
     set_string(InstrumentID);
@@ -575,19 +575,19 @@ setter_def(CThostFtdcOrderField) {
     set_string(InstrumentID);
     set_string(OrderRef);
     set_string(UserID);
-    set_flag(OrderPriceType);
-    set_flag(Direction);
-    set_flag(CombOffsetFlag[0]);
-    set_flag(CombHedgeFlag[0]);
+    set_flag(OrderPriceType, OrderPriceType);
+    set_flag(Direction, Direction);
+    set_flag(CombOffsetFlag[0], CombOffsetFlag);
+    set_flag(CombHedgeFlag[0], CombHedgeFlag);
     set_double(LimitPrice);
     set_int(VolumeTotalOriginal);
-    set_flag(TimeCondition);
+    set_flag(TimeCondition, TimeCondition);
     set_string(GTDDate);
-    set_flag(VolumeCondition);
+    set_flag(VolumeCondition, VolumeCondition);
     set_int(MinVolume);
-    set_flag(ContingentCondition);
+    set_flag(ContingentCondition, ContingentCondition);
     set_double(StopPrice);
-    set_flag(ForceCloseReason);
+    set_flag(ForceCloseReason, ForceCloseReason);
     set_int(IsAutoSuspend);
     set_string(BusinessUnit);
     set_int(RequestID);
@@ -598,14 +598,14 @@ setter_def(CThostFtdcOrderField) {
     set_string(ExchangeInstID);
     set_string(TraderID);
     set_int(InstallID);
-    set_flag(OrderSubmitStatus);
+    set_flag(OrderSubmitStatus, OrderSubmitStatus);
     set_int(NotifySequence);
     set_string(TradingDay);
     set_int(SettlementID);
     set_string(OrderSysID);
-    set_flag(OrderSource);
-    set_flag(OrderStatus);
-    set_flag(OrderType);
+    set_flag(OrderSource, OrderSource);
+    set_flag(OrderStatus, OrderStatus);
+    set_flag(OrderType, OrderType);
     set_int(VolumeTraded);
     set_int(VolumeTotal);
     set_string(InsertDate);
@@ -739,7 +739,7 @@ setter_def(CThostFtdcQryInstrumentMarginRateField) {
     set_string(BrokerID);
     set_string(InvestorID);
     set_string(InstrumentID);
-    set_flag(HedgeFlag);
+    set_flag(HedgeFlag, HedgeFlag);
     set_string(ExchangeID);
     set_string(InvestUnitID);
 }
@@ -792,7 +792,7 @@ setter_def(CThostFtdcQryTradingAccountField) {
     set_string(BrokerID);
     set_string(InvestorID);
     set_string(CurrencyID);
-    set_flag(BizType);
+    set_flag(BizType, BizType);
     set_string(AccountID);
 }
 getter_def(CThostFtdcQryTradingAccountField) {
@@ -858,7 +858,7 @@ setter_def(CThostFtdcRspAuthenticateField) {
     set_string(UserID);
     set_string(UserProductInfo);
     set_string(AppID);
-    set_flag(AppType);
+    set_flag(AppType, AppType);
 }
 getter_def(CThostFtdcRspAuthenticateField) {
     document();
@@ -953,20 +953,20 @@ setter_def(CThostFtdcTradeField) {
     set_string(UserID);
     set_string(ExchangeID);
     set_string(TradeID);
-    set_flag(Direction);
+    set_flag(Direction, Direction);
     set_string(OrderSysID);
     set_string(ParticipantID);
     set_string(ClientID);
-    set_flag(TradingRole);
+    set_flag(TradingRole, TradingRole);
     set_string(ExchangeInstID);
-    set_flag(OffsetFlag);
-    set_flag(HedgeFlag);
+    set_flag(OffsetFlag, OffsetFlag);
+    set_flag(HedgeFlag, HedgeFlag);
     set_double(Price);
     set_int(Volume);
     set_string(TradeDate);
     set_string(TradeTime);
-    set_flag(TradeType);
-    set_flag(PriceSource);
+    set_flag(TradeType, TradeType);
+    set_flag(PriceSource, PriceSource);
     set_string(TraderID);
     set_string(OrderLocalID);
     set_string(ClearingPartID);
@@ -975,7 +975,7 @@ setter_def(CThostFtdcTradeField) {
     set_string(TradingDay);
     set_int(SettlementID);
     set_int(BrokerOrderSeq);
-    set_flag(TradeSource);
+    set_flag(TradeSource, TradeSource);
     set_string(InvestUnitID);
 }
 getter_def(CThostFtdcTradeField) {
@@ -1061,7 +1061,7 @@ setter_def(CThostFtdcTradingAccountField) {
     set_double(SpecProductCloseProfit);
     set_double(SpecProductPositionProfitByAlg);
     set_double(SpecProductExchangeMargin);
-    set_flag(BizType);
+    set_flag(BizType, BizType);
     set_double(FrozenSwap);
     set_double(RemainSwap);
 }

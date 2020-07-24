@@ -34,9 +34,9 @@ using namespace rapidjson;
     }                                                                                   \
 }
 
-#define set_flag(member)                                                                \
+#define set_flag(member, attribute)                                                     \
 {                                                                                       \
-    auto iter = __doc__.FindMember(str(member));                                        \
+    auto iter = __doc__.FindMember(str(attribute));                                     \
     if (iter != __doc__.MemberEnd() && !iter->value.IsNull() && iter->value.IsInt()) {  \
         auto i = iter->value.GetInt();                                                  \
         if (CHAR_MIN <= i && i <= UCHAR_MAX)                                            \
