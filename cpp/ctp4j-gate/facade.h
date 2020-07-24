@@ -77,6 +77,24 @@ bool create_directory(const char* path) {
         return true;
 }
 
+#define WIN32_LEAN_AND_MEAN
+#include "Windows.h"
+
+std::string convert_gb2312_utf8(const char* gb2312)
+{
+    int len = MultiByteToWideChar(CP_ACP, 0, gb2312, -1, NULL, 0);
+    // The last character is null-ternimating, skip it.
+    std::wstring wstr(len - 1, 0);
+    LPWSTR wptr = const_cast<wchar_t*>(wstr.c_str());
+    MultiByteToWideChar(CP_ACP, 0, gb2312, -1, wptr, len);
+    len = WideCharToMultiByte(CP_UTF8, 0, wptr, -1, NULL, 0, NULL, NULL);
+    // The last character is null-ternimating, skip it.
+    std::string str(len - 1, 0);
+    LPSTR ptr = const_cast<char*>(str.c_str());
+    WideCharToMultiByte(CP_UTF8, 0, wptr, -1, ptr, len, NULL, NULL);
+    return str;
+}
+
 #undef min
 #undef max
 

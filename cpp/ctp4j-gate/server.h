@@ -7,9 +7,6 @@
 #include "service.h"
 #include "ws_client.h"
 
-#define WIN32_LEAN_AND_MEAN
-
-#include <Windows.h>
 #include <ws2tcpip.h>
 
 #define _call_catch(function)           \

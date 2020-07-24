@@ -40,8 +40,10 @@ void _to_trade_body(::body& body, const char* type, Ty* object, CThostFtdcRspInf
         ++count;                                                                                                        \
         if (is_last)                                                                                                    \
             total = count;                                                                                              \
-        if (rsp_ptr != nullptr)                                                                                         \
+        if (rsp_ptr != nullptr) {                                                                                       \
+            _gb2312_utf8_inplace(rsp_ptr);                                                                              \
             _to_trade_body(body, msg_type, object_ptr, rsp_ptr, id, count, total, keeper);                              \
+        }                                                                                                               \
         else                                                                                                            \
             _to_trade_body(body, msg_type, object_ptr, &tmp_rsp, id, count, total, keeper);                             \
         _send(body);                                                                                                    \
@@ -52,6 +54,19 @@ void _to_trade_body(::body& body, const char* type, Ty* object, CThostFtdcRspInf
     if (is_last)                                                                                                        \
         count = total = 0;
 
+void _gb2312_utf8_inplace(CThostFtdcInstrumentField* instrument) {
+    if (instrument == nullptr)
+        return;
+    auto utf8 = convert_gb2312_utf8(instrument->InstrumentName);
+    strcpy_s(instrument->InstrumentName, sizeof(instrument->InstrumentName), utf8.c_str());
+}
+
+void _gb2312_utf8_inplace(CThostFtdcRspInfoField* rsp_info) {
+    if (rsp_info == nullptr)
+        return;
+    auto utf8 = convert_gb2312_utf8(rsp_info->ErrorMsg);
+    strcpy_s(rsp_info->ErrorMsg, sizeof(rsp_info->ErrorMsg), utf8.c_str());
+}
 
 class trade_spi : public CThostFtdcTraderSpi {
 public:
@@ -109,6 +124,7 @@ public:
     }
 
     virtual void OnRspQryInstrument(CThostFtdcInstrumentField* pInstrument, CThostFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {
+        _gb2312_utf8_inplace(pInstrument);
         trader_rsp(IOP_MESSAGE_RSP_QRY_INSTRUMENT, pInstrument, pRspInfo, nRequestID, bIsLast, _keeper);
     }
 
