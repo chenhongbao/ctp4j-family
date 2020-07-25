@@ -4,7 +4,7 @@
 #define __SPI_COMMON__
 
 #include "facade.h"
-#include "ThostFtdcUserApiStruct.h"
+#include "ThostFtdcTraderApi.h"
 
 void gb2312_utf8_inplace(CThostFtdcInstrumentField* instrument) {
     if (instrument == nullptr)
@@ -91,18 +91,34 @@ void spi_rsp(const char* msg_type, Ty* object_ptr, CThostFtdcRspInfoField* rsp_p
 
 #include <functional>
 
-template<typename Ty, typename Sy>
-void ctp_req(const char* json, std::function<int(Ty*, int)> function, std::string& id, ::id_keeper& keeper, Sy* spi) {
+template<typename Ty, typename R>
+void ctp_req(const char* json, std::function<int(Ty*, int)> send, std::function<void(R*, int, bool)> call_back, std::string& id, ::id_keeper& keeper) {
     Ty req{ 0 };
     set_field(req, json);
     auto nid = add_and_get();
-    auto r = function(&req, nid);
+    auto r = send(&req, nid);
     keeper.put(nid, id);
     if (r != 0) {
         CThostFtdcRspInfoField rsp{ 0 };
         rsp.ErrorID = r;
         strcpy_s(rsp.ErrorMsg, sizeof(rsp.ErrorMsg), get_api_error_msg(r));
-        spi->OnRspError(&rsp, nid, true);
+        call_back(&rsp, nid, true);
+        throw ::ctp_error(r);
+    }
+}
+
+template<typename Ty, typename R>
+void ctp_order_req(const char* json, std::function<int(Ty*, int)> send,std::function<void(Ty*, R*, int, bool)> call_back,std::string& id, ::id_keeper& keeper) {
+    Ty req{ 0 };
+    set_field(req, json);
+    auto nid = add_and_get();
+    auto r = send(&req, nid);
+    keeper.put(nid, id);
+    if (r != 0) {
+        R rsp{ 0 };
+        rsp.ErrorID = r;
+        strcpy_s(rsp.ErrorMsg, sizeof(rsp.ErrorMsg), get_api_error_msg(r));
+        call_back(&req, &rsp, nid, true);
         throw ::ctp_error(r);
     }
 }

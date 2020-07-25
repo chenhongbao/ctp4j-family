@@ -7,6 +7,8 @@
 #include "service.h"
 #include "md_spi.h"
 
+using namespace std::placeholders;
+
 class md_service : public service {
 public:
     md_service(::args& args) : _spi(nullptr), _api(nullptr), _args(args) {
@@ -16,6 +18,7 @@ public:
     virtual ~md_service() {}
 
     virtual void on_body(::client& client, ::body& body) {
+        auto rsp_cb = std::bind(&CThostFtdcMdSpi::OnRspError, _spi, _1, _2, _3);
         ::frame rsp_frame;
         if (body.type == IOP_MESSAGE_HEARTBEAT) {
             // Send back the heartbeat with a new response ID.
@@ -23,20 +26,20 @@ public:
             client.send_body(body, IOP_FRAME_HEARTBEAT);
         }
         else if (body.type == IOP_MESSAGE_REQ_LOGIN) {
-            ctp_req<CThostFtdcReqUserLoginField>(
+            ctp_req<CThostFtdcReqUserLoginField, CThostFtdcRspInfoField>(
                 body.object.c_str(),
-                std::bind(&CThostFtdcMdApi::ReqUserLogin, _api, std::placeholders::_1, std::placeholders::_2),
+                std::bind(&CThostFtdcMdApi::ReqUserLogin, _api, _1, _2),
+                rsp_cb,
                 body.request_id,
-                _id,
-                _spi);
+                _id);
         }
         else if (body.type == IOP_MESSAGE_REQ_LOGOUT) {
-            ctp_req<CThostFtdcUserLogoutField>(
+            ctp_req<CThostFtdcUserLogoutField, CThostFtdcRspInfoField>(
                 body.object.c_str(),
-                std::bind(&CThostFtdcMdApi::ReqUserLogout, _api, std::placeholders::_1, std::placeholders::_2),
+                std::bind(&CThostFtdcMdApi::ReqUserLogout, _api, _1, _2),
+                rsp_cb,
                 body.request_id,
-                _id,
-                _spi);
+                _id);
         }
         else if (body.type == IOP_MESSAGE_SUB_MD) {
             CThostFtdcSubMarketDataField sub;
