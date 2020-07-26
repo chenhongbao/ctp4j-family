@@ -62,10 +62,10 @@ public class IOPConnector {
     }
 
     public void kill() {
-        if (this.process != null)
-            this.process.kill();
         if (this.client != null)
             this.client.disconnect();
+        if (this.process != null)
+            this.process.kill();
         this.process = null;
         this.client = null;
     }
