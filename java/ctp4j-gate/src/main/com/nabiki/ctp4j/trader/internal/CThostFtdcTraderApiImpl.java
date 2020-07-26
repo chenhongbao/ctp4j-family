@@ -54,11 +54,11 @@ public class CThostFtdcTraderApiImpl extends CThostFtdcTraderApi {
         else
             this.initCfg.Flow = ".";
         try {
-            var f = new File("ctp4j-gate.trade.properties");
+            var f = new File("ctp4j-gate-trade.properties");
             if (f.exists())
                 this.sdkCfg = SdkConfig.external(f);
             else
-                this.sdkCfg = SdkConfig.resource("ctp4j-gate.trade");
+                this.sdkCfg = SdkConfig.resource("ctp4j-gate-trade");
         } catch (Throwable th) {
             throw new RuntimeException(th.getMessage(), th);
         }

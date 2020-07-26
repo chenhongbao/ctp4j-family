@@ -83,7 +83,7 @@ public class SdkConfig {
     private static SdkConfig internal(String resourceName) {
         var cfg = new SdkConfig();
         ResourceBundle resource = ResourceBundle
-                .getBundle("com/nabiki/ctp4j/internal/resources/" + resourceName);
+                .getBundle("com.nabiki.ctp4j.internal.resources." + resourceName);
         var mode = resource.getString("mode");
         if (mode.compareTo("inet") == 0)
             cfg.Mode = AppMode.INET;
