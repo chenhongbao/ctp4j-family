@@ -91,8 +91,8 @@ void spi_rsp(const char* msg_type, Ty* object_ptr, CThostFtdcRspInfoField* rsp_p
 
 #include <functional>
 
-template<typename Ty, typename R>
-void ctp_req(const char* json, std::function<int(Ty*, int)> send, std::function<void(R*, int, bool)> call_back, std::string& id, ::id_keeper& keeper) {
+template<typename Ty>
+void ctp_req(const char* json, std::function<int(Ty*, int)> send, std::function<void(CThostFtdcRspInfoField*, int, bool)> call_back, std::string& id, ::id_keeper& keeper) {
     Ty req{ 0 };
     set_field(req, json);
     auto nid = add_and_get();
@@ -107,15 +107,15 @@ void ctp_req(const char* json, std::function<int(Ty*, int)> send, std::function<
     }
 }
 
-template<typename Ty, typename R>
-void ctp_order_req(const char* json, std::function<int(Ty*, int)> send,std::function<void(Ty*, R*, int, bool)> call_back,std::string& id, ::id_keeper& keeper) {
+template<typename Ty>
+void ctp_order_req(const char* json, std::function<int(Ty*, int)> send,std::function<void(Ty*, CThostFtdcRspInfoField*, int, bool)> call_back,std::string& id, ::id_keeper& keeper) {
     Ty req{ 0 };
     set_field(req, json);
     auto nid = add_and_get();
     auto r = send(&req, nid);
     keeper.put(nid, id);
     if (r != 0) {
-        R rsp{ 0 };
+        CThostFtdcRspInfoField rsp{ 0 };
         rsp.ErrorID = r;
         strcpy_s(rsp.ErrorMsg, sizeof(rsp.ErrorMsg), get_api_error_msg(r));
         call_back(&req, &rsp, nid, true);

@@ -26,7 +26,7 @@ public:
             client.send_body(body, IOP_FRAME_HEARTBEAT);
         }
         else if (body.type == IOP_MESSAGE_REQ_LOGIN) {
-            ctp_req<CThostFtdcReqUserLoginField, CThostFtdcRspInfoField>(
+            ctp_req<CThostFtdcReqUserLoginField>(
                 body.object.c_str(),
                 std::bind(&CThostFtdcMdApi::ReqUserLogin, _api, _1, _2),
                 rsp_cb,
@@ -34,7 +34,7 @@ public:
                 _id);
         }
         else if (body.type == IOP_MESSAGE_REQ_LOGOUT) {
-            ctp_req<CThostFtdcUserLogoutField, CThostFtdcRspInfoField>(
+            ctp_req<CThostFtdcUserLogoutField>(
                 body.object.c_str(),
                 std::bind(&CThostFtdcMdApi::ReqUserLogout, _api, _1, _2),
                 rsp_cb,
