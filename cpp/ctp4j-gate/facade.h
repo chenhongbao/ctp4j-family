@@ -38,12 +38,27 @@ std::string get_time_str(const char* format = "%Y-%m-%d %H:%M:%S") {
     return ss.str();
 }
 
+std::string get_file_name(const char* full) {
+    if (full == nullptr || strlen(full) == 0)
+        return "";
+    std::string buf(full);
+    auto pos = buf.find_last_of('\\');
+    if (pos == std::string::npos)
+        pos = buf.find_last_of('/');
+    if (pos == std::string::npos)
+        return buf;
+    else
+        return buf.substr(pos + 1);
+}
+
 #include <fstream>
 
-void print(const char* msg, const char* file = "cout.log") {
+#define print(m) v_print(m, __FILE__, __FUNCTION__ , __LINE__)
+
+void v_print(const char* msg, const char* src, const char* function, const int line, const char* file = "cout.log") {
     try {
         std::ofstream ofs(file, std::ios::app | std::ios::out);
-        ofs << get_time_str() << " " << msg << std::endl;
+        ofs << "[" << get_time_str() << "][" << get_file_name(src) << "][" << function << "][" << line << "] " << msg << std::endl;
         ofs.flush();
     }
     catch (std::exception& e) {

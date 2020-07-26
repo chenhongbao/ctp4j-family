@@ -31,10 +31,16 @@ public:
 
     void run() {
         _init_dirs();
-        _ws();
-        _listen(_args.get_host().c_str(), _args.get_port().c_str());
-        _serve();
-        _ws();
+        try {
+            _ws();
+            _listen(_args.get_host().c_str(), _args.get_port().c_str());
+            _serve();
+            _ws();
+        }
+        catch (std::exception& e) {
+            print(e.what());
+            WSACleanup();
+        }
     }
 
 
@@ -65,26 +71,22 @@ protected:
 
         // Resolve the server address and port
         if (getaddrinfo(host, port, &hints, &result) != 0) {
-            WSACleanup();
             throw ws_error(WSAGetLastError());
         }
         _listen_socket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
         if (_listen_socket == INVALID_SOCKET) {
             freeaddrinfo(result);
-            WSACleanup();
             throw ws_error(WSAGetLastError());
         }
         if (bind(_listen_socket, result->ai_addr, (int)result->ai_addrlen) == SOCKET_ERROR) {
             freeaddrinfo(result);
             closesocket(_listen_socket);
-            WSACleanup();
             throw ws_error(WSAGetLastError());
         }
         freeaddrinfo(result);
         // Listening.
         if (listen(_listen_socket, SOMAXCONN) == SOCKET_ERROR) {
             closesocket(_listen_socket);
-            WSACleanup();
             throw ws_error(WSAGetLastError());
         }
     }
@@ -93,7 +95,6 @@ protected:
         SOCKET client_socket = INVALID_SOCKET;
         if ((client_socket = accept(_listen_socket, NULL, NULL)) == INVALID_SOCKET) {
             closesocket(_listen_socket);
-            WSACleanup();
             throw ws_error(WSAGetLastError());
         }
         _client.set_socket(client_socket);
