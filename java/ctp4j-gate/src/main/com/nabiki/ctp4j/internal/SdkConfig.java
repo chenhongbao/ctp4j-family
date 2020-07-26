@@ -47,32 +47,43 @@ public class SdkConfig {
 
     private SdkConfig() {}
 
-    public static SdkConfig load(File config) throws IOException {
-        var cfg = internal();
+    public static SdkConfig external(File config) throws IOException {
+        var cfg = new SdkConfig();
         var props = new Properties();
         props.load(new FileInputStream(config));
-        var mode = props.getProperty("mode", "executable");
+        var mode = props.getProperty(
+                "mode",
+                "executable");
         if (mode.compareTo("inet") == 0)
             cfg.Mode = AppMode.INET;
         else if (mode.compareTo("executable") == 0)
             cfg.Mode = AppMode.EXECUTABLE;
-        cfg.CWD = new File(props.getProperty("cwd", "."));
-        cfg.Redirect = new File(props.getProperty("redirect",
+        cfg.CWD = new File(
+                props.getProperty(
+                        "cwd",
+                        "."));
+        cfg.Redirect = new File(
+                props.getProperty(
+                        "redirect",
                 "ctp4j-redirect.txt"));
-        cfg.Host = props.getProperty("host", "localhost");
-        cfg.Port = Integer.parseInt(props.getProperty("port",
-                "9036"));
+        cfg.Host = props.getProperty(
+                "host",
+                "localhost");
+        cfg.Port = Integer.parseInt(
+                props.getProperty(
+                        "port",
+                "0"));
         return cfg;
     }
 
-    public static SdkConfig load() {
-        return internal();
+    public static SdkConfig resource(String resourceName) {
+        return internal(resourceName);
     }
 
-    private static SdkConfig internal() {
+    private static SdkConfig internal(String resourceName) {
         var cfg = new SdkConfig();
         ResourceBundle resource = ResourceBundle
-                .getBundle("com/nabiki/ctp4j/internal/resources/ctp4j-gate");
+                .getBundle("com/nabiki/ctp4j/internal/resources/" + resourceName);
         var mode = resource.getString("mode");
         if (mode.compareTo("inet") == 0)
             cfg.Mode = AppMode.INET;
