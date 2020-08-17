@@ -49,7 +49,7 @@ public class CThostFtdcTraderApiImpl extends CThostFtdcTraderApi {
     private TradeClientMessageAdaptor msgAdaptor;
 
     public CThostFtdcTraderApiImpl(String flow) {
-        if (flow.trim().length() > 0)
+        if (flow != null && flow.trim().length() > 0)
             this.initCfg.Flow = flow.trim();
         else
             this.initCfg.Flow = ".";

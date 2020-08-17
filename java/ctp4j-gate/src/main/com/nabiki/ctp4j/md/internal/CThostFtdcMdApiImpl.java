@@ -52,7 +52,7 @@ public class CThostFtdcMdApiImpl extends CThostFtdcMdApi {
     private MdClientMessageAdaptor msgAdaptor;
 
     public CThostFtdcMdApiImpl(String flow, boolean udp, boolean multicast) {
-        if (flow.trim().length() > 0)
+        if (flow != null && flow.trim().length() > 0)
             this.initCfg.Flow = flow.trim();
         else
             this.initCfg.Flow = ".";
