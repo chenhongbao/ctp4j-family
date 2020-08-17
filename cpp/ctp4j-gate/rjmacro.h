@@ -30,7 +30,8 @@ using namespace rapidjson;
     auto iter = __doc__.FindMember(str(member));                                        \
     if (iter != __doc__.MemberEnd() && !iter->value.IsNull()                            \
         && iter->value.IsString()) {                                                    \
-        strcpy_s(ref(__field__, member), iter->value.GetString());                      \
+        strncpy_s(ref(__field__, member), sizeof(ref(__field__, member)),               \
+            iter->value.GetString(), sizeof(ref(__field__, member)));                   \
     }                                                                                   \
 }
 
