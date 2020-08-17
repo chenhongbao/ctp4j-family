@@ -87,12 +87,18 @@ protected:
             _parse_front(p);
     }
 
+    bool _is_prefix(const char* v) {
+        if (v == nullptr || strlen(v) < 2)
+            return false;
+        return v[0] == '-' && v[1] == '-';
+    }
+
     const char* _get_arg(const char* prefix, int argc, char** argv) {
         int i = 0;
         for (i = 0; i < argc; ++i)
             if (strcmp(argv[i], prefix) == 0)
                 break;
-        if (i < argc - 1) {
+        if (i < argc - 1 && !_is_prefix(argv[i + 1])) {
             return argv[i + 1];
         }
         else
