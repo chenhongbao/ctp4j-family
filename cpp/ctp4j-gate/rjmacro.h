@@ -98,9 +98,9 @@ __doc__.Parse(__json__);                                                        
     __writer__.Null();                              \
 }
 
-#define get_flag(member)                            \
+#define get_flag(member, attribute)                 \
 {                                                   \
-    __writer__.Key(#member);                        \
+    __writer__.Key(#attribute);                     \
     __writer__.Int((int)__field__.##member);        \
 }
 
