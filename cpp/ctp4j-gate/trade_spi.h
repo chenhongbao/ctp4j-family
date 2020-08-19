@@ -20,6 +20,7 @@ public:
         CThostFtdcConnectField conn;
         CThostFtdcRspInfoField rsp_info{ 0 };
         spi_rsp(IOP_MESSAGE_RSP_CONNECT, &conn, &rsp_info, 0, true, _keeper, _client);
+        print_code("connected", 0);
     }
 
     virtual void OnFrontDisconnected(int nReason) {
@@ -27,6 +28,7 @@ public:
         CThostFtdcRspInfoField rsp_info{ 0 };
         disconn.Reason = nReason;
         spi_rsp(IOP_MESSAGE_RSP_DISCONNECT, &disconn, &rsp_info, 0, true, _keeper, _client);
+        print_code("disconnected", nReason);
     }
 
     virtual void OnRspAuthenticate(CThostFtdcRspAuthenticateField* pRspAuthenticateField, CThostFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {

@@ -66,6 +66,11 @@ void v_print(const char* msg, const char* src, const char* function, const int l
     }
 }
 
+void print_code(const char* m, int code) {
+    std::string msg = std::string(m) + std::string("(") + std::to_string(code) + std::string(")");
+    print(msg.c_str());
+}
+
 #include "Objbase.h"
 
 std::string get_uuid() {
