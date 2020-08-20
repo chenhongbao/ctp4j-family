@@ -55,6 +55,12 @@ std::string get_file_name(const char* full) {
 
 #define print(m) v_print(m, __FILE__, __FUNCTION__ , __LINE__)
 
+#define print_code(m, code)                                                                         \
+{                                                                                                   \
+    std::string msg = std::string(m) + std::string("(") + std::to_string(code) + std::string(")");  \
+    print(msg.c_str());                                                                             \
+}
+
 void v_print(const char* msg, const char* src, const char* function, const int line, const char* file = "cout.log") {
     try {
         std::ofstream ofs(file, std::ios::app | std::ios::out);
@@ -64,11 +70,6 @@ void v_print(const char* msg, const char* src, const char* function, const int l
     catch (std::exception& e) {
         printf("%s\n", e.what());
     }
-}
-
-void print_code(const char* m, int code) {
-    std::string msg = std::string(m) + std::string("(") + std::to_string(code) + std::string(")");
-    print(msg.c_str());
 }
 
 #include "Objbase.h"
